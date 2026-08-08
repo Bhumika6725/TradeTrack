@@ -1,0 +1,272 @@
+/* ==========================================
+   TradeTrack Pro
+   Add Trade CSS
+========================================== */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+    background:#f4f7fb;
+    color:#1f2937;
+}
+
+/* ================= Layout ================= */
+
+.container{
+    display:flex;
+    min-height:100vh;
+}
+
+/* ================= Sidebar ================= */
+
+.sidebar{
+    width:260px;
+    background:#111827;
+    color:#fff;
+    padding:30px 20px;
+}
+
+.logo{
+    text-align:center;
+    margin-bottom:40px;
+}
+
+.logo h2{
+    font-size:26px;
+    font-weight:600;
+}
+
+.menu{
+    list-style:none;
+}
+
+.menu li{
+    margin-bottom:12px;
+}
+
+.menu li a{
+    display:block;
+    padding:14px 18px;
+    color:white;
+    text-decoration:none;
+    border-radius:12px;
+    transition:.3s;
+}
+
+.menu li a:hover{
+    background:#1f2937;
+}
+
+.menu li.active a{
+    background:#2563eb;
+}
+
+/* ================= Main ================= */
+
+.main{
+    flex:1;
+    padding:40px;
+}
+
+.page-title{
+    margin-bottom:30px;
+}
+
+.page-title h1{
+    font-size:34px;
+    margin-bottom:8px;
+}
+
+.page-title p{
+    color:#6b7280;
+}
+
+/* ================= Form ================= */
+
+form{
+    background:white;
+    padding:35px;
+    border-radius:20px;
+    box-shadow:0 12px 35px rgba(0,0,0,.08);
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:25px;
+}
+
+.input-box{
+    display:flex;
+    flex-direction:column;
+}
+
+.input-box label{
+    font-weight:500;
+    margin-bottom:8px;
+}
+
+.input-box input,
+.input-box select,
+textarea{
+
+    width:100%;
+    padding:14px;
+
+    border:1px solid #d1d5db;
+
+    border-radius:10px;
+
+    outline:none;
+
+    font-size:15px;
+
+    transition:.3s;
+
+}
+
+.input-box input:focus,
+.input-box select:focus,
+textarea:focus{
+
+    border-color:#2563eb;
+
+    box-shadow:0 0 0 4px rgba(37,99,235,.15);
+
+}
+
+/* ================= Notes ================= */
+
+.notes{
+
+    margin-top:30px;
+
+}
+
+.notes label{
+
+    display:block;
+
+    margin-bottom:10px;
+
+    font-weight:500;
+
+}
+
+textarea{
+
+    resize:none;
+
+}
+
+/* ================= Summary ================= */
+
+.summary{
+
+    margin-top:35px;
+
+    background:#eef4ff;
+
+    border-left:5px solid #2563eb;
+
+    padding:25px;
+
+    border-radius:15px;
+
+}
+
+.summary h2{
+
+    color:#2563eb;
+
+    font-size:22px;
+
+}
+
+.summary h1{
+
+    margin-top:10px;
+
+    font-size:42px;
+
+    color:#16a34a;
+
+}
+
+/* ================= Button ================= */
+
+.save-btn{
+
+    width:100%;
+
+    margin-top:30px;
+
+    padding:16px;
+
+    border:none;
+
+    border-radius:12px;
+
+    background:#2563eb;
+
+    color:white;
+
+    font-size:17px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+.save-btn:hover{
+
+    background:#1d4ed8;
+
+    transform:translateY(-3px);
+
+}
+
+/* ================= Responsive ================= */
+
+@media(max-width:900px){
+
+.container{
+
+    flex-direction:column;
+
+}
+
+.sidebar{
+
+    width:100%;
+
+}
+
+.main{
+
+    padding:20px;
+
+}
+
+.grid{
+
+    grid-template-columns:1fr;
+
+}
+
+form{
+
+    padding:20px;
+
+}
+
+}
+

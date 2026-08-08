@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>TradeTrack Pro | Settings</title>
+
+    <script>
+        if (localStorage.getItem("isLoggedIn") !== "true") {
+            localStorage.setItem("authMessage", "Please login first to continue.");
+            window.location.href = "index.html";
+        }
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="../CSS/settings.css">
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- ================= Sidebar ================= -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+
+            <h2>📈 TradeTrack Pro</h2>
+
+        </div>
+
+        <ul class="menu">
+
+            <li>
+
+                <a href="dashboard.html">
+
+                    🏠 Dashboard
+
+                </a>
+
+            </li>
+
+            <li>
+
+                <a href="addTrade.html">
+
+                    ➕ Add Trade
+
+                </a>
+
+            </li>
+
+            <li>
+
+                <a href="history.html">
+
+                    📜 Trade History
+
+                </a>
+
+            </li>
+
+            <li>
+
+                <a href="analytics.html">
+
+                    📊 Analytics
+
+                </a>
+
+            </li>
+
+            <li>
+
+                <a href="riskCalculator.html">
+
+                    🎯 Risk Calculator
+
+                </a>
+
+            </li>
+
+            <li class="active">
+
+                <a href="settings.html">
+
+                    ⚙️ Settings
+
+                </a>
+
+            </li>
+
+        </ul>
+
+    </aside>
+
+
+
+    <!-- ================= Main ================= -->
+
+    <main class="main-content">
+
+        <div class="page-header">
+
+            <h1>⚙️ Settings</h1>
+
+            <p>
+
+                Manage your profile, preferences and application.
+
+            </p>
+
+        </div>
+
+
+
+        <!-- ================= Profile ================= -->
+
+        <div class="settings-card profile-card">
+
+            <div class="profile-left">
+
+                <div class="avatar">
+
+                    👤
+
+                </div>
+
+                <div>
+
+                    <h2 id="profileName">
+
+                        Bhumika Niwate
+
+                    </h2>
+
+                    <p id="profileEmail">
+
+                        example@gmail.com
+
+                    </p>
+
+                    <small id="profileUsername">
+
+                        @username
+
+                    </small>
+
+                </div>
+
+            </div>
+
+            <button class="edit-btn">
+
+                ✏ Edit Profile
+
+            </button>
+
+        </div>
+
+
+
+        <!-- ================= Personal Info ================= -->
+
+        <div class="settings-card">
+
+            <h2>
+
+                👤 Personal Information
+
+            </h2>
+
+            <div class="grid">
+
+                <div class="input-group">
+
+                    <label>
+
+                        Full Name
+
+                    </label>
+
+                    <input
+
+                        type="text"
+
+                        id="name"
+
+                        placeholder="Enter Full Name">
+
+                </div>
+
+                <div class="input-group">
+
+                    <label>
+
+                        Email
+
+                    </label>
+
+                    <input
+
+                        type="email"
+
+                        id="email"
+
+                        placeholder="Enter Email">
+
+                </div>
+
+            </div>
+
+        </div>
+ <!-- ================= Trading Preferences ================= -->
+
+        <div class="settings-card">
+
+            <h2>💹 Trading Preferences</h2>
+
+            <div class="grid">
+
+                <div class="input-group">
+
+                    <label>Currency</label>
+
+                    <select id="currency">
+
+                        <option value="₹">₹ Indian Rupee</option>
+
+                        <option value="$">$ US Dollar</option>
+
+                        <option value="€">€ Euro</option>
+
+                    </select>
+
+                </div>
+
+                <div class="input-group">
+
+                    <label>Default Risk</label>
+
+                    <select id="risk">
+
+                        <option>1%</option>
+
+                        <option selected>2%</option>
+
+                        <option>3%</option>
+
+                        <option>5%</option>
+
+                    </select>
+
+                </div>
+
+                <div class="input-group">
+
+                    <label>Default Capital</label>
+
+                    <input
+                        type="number"
+                        id="capital"
+                        placeholder="100000">
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ================= Data Management ================= -->
+
+        <div class="settings-card">
+
+            <h2>📊 Data Management</h2>
+
+            <div class="button-grid">
+
+                <button id="exportBtn" class="secondary-btn">
+
+                    📤 Export CSV
+
+                </button>
+
+                <button id="pdfBtn" class="secondary-btn">
+
+                    📄 Export PDF
+
+                </button>
+
+                <button id="backupBtn" class="secondary-btn">
+
+                    💾 Backup JSON
+
+                </button>
+
+                <button id="importBtn" class="secondary-btn">
+
+                    📥 Import Backup
+
+                </button>
+
+                <input
+                    type="file"
+                    id="importFile"
+                    hidden>
+
+                <button id="clearBtn" class="danger-btn">
+
+                    🗑 Clear All Trades
+
+                </button>
+
+            </div>
+
+        </div>
+                <!-- ================= Security ================= -->
+
+        <div class="settings-card">
+
+            <h2>🔐 Security</h2>
+
+            <div class="grid">
+
+                <div class="input-group">
+
+                    <label>Current Password</label>
+
+                    <input
+                        type="password"
+                        id="currentPassword"
+                        placeholder="Enter Current Password">
+
+                </div>
+
+                <div class="input-group">
+
+                    <label>New Password</label>
+
+                    <input
+                        type="password"
+                        id="newPassword"
+                        placeholder="Enter New Password">
+
+                </div>
+
+                <div class="input-group">
+
+                    <label>Confirm Password</label>
+
+                    <input
+                        type="password"
+                        id="confirmPassword"
+                        placeholder="Confirm Password">
+
+                </div>
+
+            </div>
+
+            <br>
+
+            <button id="changePasswordBtn" class="btn">
+
+                🔑 Change Password
+
+            </button>
+
+        </div>
+
+
+
+        <!-- ================= About ================= -->
+
+        <div class="settings-card">
+
+            <h2>ℹ️ About TradeTrack Pro</h2>
+
+            <div class="about">
+
+                <p><strong>Application :</strong> TradeTrack Pro</p>
+
+                <p><strong>Version :</strong> 2.0</p>
+
+                <p><strong>Developer :</strong> Bhumika Niwate</p>
+
+                <p><strong>Technology :</strong> HTML • CSS • JavaScript</p>
+
+                <p><strong>Storage :</strong> Local Storage</p>
+
+                <p><strong>Status :</strong>
+                    <span style="color:green;font-weight:600;">
+                        Active
+                    </span>
+                </p>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ================= Footer Buttons ================= -->
+
+        <div class="button-group">
+
+            <button id="saveBtn">
+
+                💾 Save Changes
+
+            </button>
+
+            <button id="logoutBtn" class="danger-btn">
+
+                🚪 Logout
+
+            </button>
+
+        </div>
+
+    </main>
+
+</div>
+
+<script src="../JS/settings.js"></script>
+
+</body>
+
+</html>

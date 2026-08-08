@@ -1,0 +1,784 @@
+/* ==========================================
+   TradeTrack Pro - Authentication
+   Author : ChatGPT
+========================================== */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    overflow:hidden;
+    background:linear-gradient(135deg,#0f172a,#1e3a8a,#2563eb);
+    position:relative;
+}
+
+/* Animated Background */
+
+body::before{
+    content:"";
+    position:absolute;
+    width:450px;
+    height:450px;
+    border-radius:50%;
+    background:rgba(255,255,255,.08);
+    top:-150px;
+    left:-100px;
+    filter:blur(20px);
+    animation:float1 8s infinite ease-in-out;
+}
+
+body::after{
+    content:"";
+    position:absolute;
+    width:350px;
+    height:350px;
+    border-radius:50%;
+    background:rgba(255,255,255,.06);
+    right:-120px;
+    bottom:-100px;
+    filter:blur(15px);
+    animation:float2 10s infinite ease-in-out;
+}
+
+@keyframes float1{
+    0%,100%{
+        transform:translateY(0);
+    }
+    50%{
+        transform:translateY(40px);
+    }
+}
+
+@keyframes float2{
+    0%,100%{
+        transform:translateY(0);
+    }
+    50%{
+        transform:translateY(-40px);
+    }
+}
+
+/* Main Container */
+
+.container{
+
+    width:1100px;
+
+    max-width:95%;
+
+    min-height:650px;
+
+    display:flex;
+
+    border-radius:25px;
+
+    overflow:hidden;
+
+    background:rgba(255,255,255,.08);
+
+    backdrop-filter:blur(18px);
+
+    box-shadow:0 20px 60px rgba(0,0,0,.35);
+
+    border:1px solid rgba(255,255,255,.15);
+
+    z-index:5;
+
+}
+
+/* LEFT PANEL */
+
+.left-panel{
+
+    flex:1;
+
+    padding:60px;
+
+    color:#fff;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    background:linear-gradient(160deg,#1d4ed8,#2563eb);
+
+}
+
+.left-panel h1{
+
+    font-size:42px;
+
+    margin-bottom:10px;
+
+    font-weight:700;
+
+}
+
+.left-panel h2{
+
+    font-size:22px;
+
+    font-weight:500;
+
+    margin-bottom:25px;
+
+}
+
+.left-panel p{
+
+    font-size:17px;
+
+    line-height:1.8;
+
+    opacity:.95;
+
+    margin-bottom:40px;
+
+}
+
+.features{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:18px;
+
+}
+
+.features div{
+
+    padding:14px 18px;
+
+    background:rgba(255,255,255,.12);
+
+    border-radius:12px;
+
+    font-size:15px;
+
+    transition:.3s;
+
+}
+
+.features div:hover{
+
+    transform:translateX(8px);
+
+    background:rgba(255,255,255,.2);
+
+}
+
+/* RIGHT PANEL */
+
+.right-panel{
+
+    flex:1;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    padding:50px;
+
+    background:#fff;
+
+}
+
+/* LOGIN / SIGNUP CARD */
+
+.form-box{
+
+    width:100%;
+
+    max-width:380px;
+
+}
+
+.form-box h2{
+
+    font-size:34px;
+
+    color:#0f172a;
+
+    margin-bottom:10px;
+
+}
+
+.form-box p{
+
+    color:#64748b;
+
+    margin-bottom:30px;
+
+}
+
+label{
+
+    display:block;
+
+    margin-bottom:8px;
+
+    font-weight:600;
+
+    color:#334155;
+
+}
+
+input{
+
+    width:100%;
+
+    padding:15px;
+
+    border-radius:12px;
+
+    border:1px solid #dbeafe;
+
+    outline:none;
+
+    margin-bottom:20px;
+
+    font-size:15px;
+
+    transition:.3s;
+
+}
+
+input:focus{
+
+    border-color:#2563eb;
+
+    box-shadow:0 0 10px rgba(37,99,235,.25);
+
+}
+/* ============================
+   Password Box
+============================ */
+
+.password-box{
+    position:relative;
+    width:100%;
+    margin-bottom:20px;
+}
+
+.password-box input{
+    margin-bottom:0;
+    padding-right:55px;
+}
+
+.password-box span{
+    position:absolute;
+    right:18px;
+    top:50%;
+    transform:translateY(-50%);
+    cursor:pointer;
+    font-size:18px;
+    color:#64748b;
+    transition:.3s;
+}
+
+.password-box span:hover{
+    color:#2563eb;
+}
+
+/* ============================
+   Remember & Forgot
+============================ */
+
+.options{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:25px;
+    font-size:14px;
+}
+
+.options label{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    cursor:pointer;
+    color:#475569;
+    font-weight:500;
+}
+
+.options input{
+    width:auto;
+    margin:0;
+}
+
+.options a{
+    text-decoration:none;
+    color:#2563eb;
+    font-weight:600;
+    transition:.3s;
+}
+
+.options a:hover{
+    color:#1d4ed8;
+}
+
+/* ============================
+   Button
+============================ */
+
+button{
+
+    width:100%;
+
+    padding:15px;
+
+    border:none;
+
+    border-radius:12px;
+
+    background:linear-gradient(135deg,#2563eb,#1d4ed8);
+
+    color:#fff;
+
+    font-size:16px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.35s;
+
+    box-shadow:0 10px 25px rgba(37,99,235,.35);
+
+}
+
+button:hover{
+
+    transform:translateY(-3px);
+
+    box-shadow:0 18px 35px rgba(37,99,235,.45);
+
+}
+
+/* ============================
+   Error Message
+============================ */
+
+#errorMessage{
+
+    margin-top:18px;
+
+    text-align:center;
+
+    font-size:14px;
+
+    font-weight:500;
+
+    color:#dc2626;
+
+}
+
+/* ============================
+   Bottom Link
+============================ */
+
+.link{
+
+    text-align:center;
+
+    margin-top:25px;
+
+    color:#64748b;
+
+    font-size:15px;
+
+}
+
+.link a{
+
+    color:#2563eb;
+
+    text-decoration:none;
+
+    font-weight:700;
+
+    transition:.3s;
+
+}
+
+.link a:hover{
+
+    color:#1d4ed8;
+
+}
+
+/* ============================
+   Card Animation
+============================ */
+
+.form-box{
+
+    animation:fadeUp .8s ease;
+
+}
+
+@keyframes fadeUp{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(30px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+/* ==========================================
+   TradeTrack Pro - Auth CSS Part 3
+   Responsive + Premium Effects
+========================================== */
+
+/* Floating Glow */
+
+.left-panel::before{
+    content:"";
+    position:absolute;
+    width:220px;
+    height:220px;
+    background:rgba(255,255,255,.08);
+    border-radius:50%;
+    top:60px;
+    left:60px;
+    filter:blur(8px);
+}
+
+.left-panel{
+    position:relative;
+    overflow:hidden;
+}
+
+/* Custom Scrollbar */
+
+::-webkit-scrollbar{
+    width:8px;
+}
+
+::-webkit-scrollbar-thumb{
+    background:#2563eb;
+    border-radius:20px;
+}
+
+::-webkit-scrollbar-track{
+    background:#edf2f7;
+}
+
+/* Placeholder */
+
+input::placeholder{
+    color:#94a3b8;
+}
+
+/* Focus Effect */
+
+input:focus{
+
+    transform:translateY(-2px);
+
+}
+
+/* Button Active */
+
+button:active{
+
+    transform:scale(.98);
+
+}
+
+/* Smooth Transition */
+
+a,
+button,
+input,
+.features div{
+
+    transition:.35s;
+
+}
+
+/* Responsive */
+
+@media(max-width:1050px){
+
+.container{
+
+    width:95%;
+
+}
+
+.left-panel{
+
+    padding:45px;
+
+}
+
+.right-panel{
+
+    padding:40px;
+
+}
+
+}
+
+@media(max-width:900px){
+
+.container{
+
+    flex-direction:column;
+
+    height:auto;
+
+}
+
+.left-panel{
+
+    padding:45px;
+
+    text-align:center;
+
+}
+
+.features{
+
+    margin-top:20px;
+
+}
+
+.right-panel{
+
+    padding:40px;
+
+}
+
+.form-box{
+
+    max-width:100%;
+
+}
+
+}
+
+@media(max-width:600px){
+
+body{
+
+    padding:15px;
+
+}
+
+.container{
+
+    border-radius:18px;
+
+}
+
+.left-panel h1{
+
+    font-size:32px;
+
+}
+
+.left-panel h2{
+
+    font-size:18px;
+
+}
+
+.left-panel p{
+
+    font-size:15px;
+
+}
+
+.form-box h2{
+
+    font-size:28px;
+
+}
+
+button{
+
+    padding:14px;
+
+}
+
+.options{
+
+    flex-direction:column;
+
+    gap:12px;
+
+    align-items:flex-start;
+
+}
+
+}
+
+@media(max-width:420px){
+
+.left-panel{
+
+    padding:30px;
+
+}
+
+.right-panel{
+
+    padding:25px;
+
+}
+
+input{
+
+    padding:13px;
+
+}
+
+button{
+
+    font-size:15px;
+
+}
+
+}
+
+/* =========================================
+   Forgot Password Page Extra CSS
+========================================= */
+
+/* Input with Eye Icon */
+
+.input-group{
+
+    position: relative;
+
+    margin-bottom: 18px;
+
+}
+
+.input-group span{
+
+    position: absolute;
+
+    right: 15px;
+
+    top: 42px;
+
+    cursor: pointer;
+
+    font-size: 18px;
+
+    color: #666;
+
+    user-select: none;
+
+}
+
+.input-group span:hover{
+
+    color: #2563eb;
+
+}
+
+/* Password Strength */
+
+#passwordStrength{
+
+    margin-top: -8px;
+
+    margin-bottom: 15px;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+}
+
+/* Success / Error Message */
+
+#message{
+
+    text-align: center;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    margin-bottom: 15px;
+
+}
+
+/* Bottom Link */
+
+.bottom-link{
+
+    text-align: center;
+
+    margin-top: 20px;
+
+}
+
+.bottom-link a{
+
+    color: #2563eb;
+
+    text-decoration: none;
+
+    font-weight: 600;
+
+    transition: .3s;
+
+}
+
+.bottom-link a:hover{
+
+    color: #1d4ed8;
+
+    text-decoration: underline;
+
+}
+
+/* Forgot Password Link */
+
+.forgot-link{
+
+    color: #2563eb;
+
+    text-decoration: none;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+}
+
+.forgot-link:hover{
+
+    text-decoration: underline;
+
+}
