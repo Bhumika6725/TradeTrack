@@ -1,8 +1,11 @@
-# 📈 TradeTrack Pro - Flask Web Application
+# 📈 TradeTrack Pro
 
-**TradeTrack Pro** is a modern, mobile-first professional trading journal and analytics web application built with a **Python Flask** backend, **Jinja2** templates, **Tailwind CSS**, custom theme CSS custom variables (Dark & Light mode), and **Chart.js** performance visualizers.
+🚀 **Live Demo**: [https://bhumika6725.github.io/TradeTrack/HTML/index.html](https://bhumika6725.github.io/TradeTrack/HTML/index.html)
+
+**TradeTrack Pro** is a modern, mobile-first professional trading journal and analytics web application built with **HTML5**, **CSS3**, **Vanilla JavaScript**, **Chart.js**, and **Google Fonts**.
 
 ---
+
 
 ## 🌟 Key Features
 
@@ -83,10 +86,11 @@ Start the Flask server:
 python app.py
 ```
 
-### 3. Open in Browser
+### 3. Open Live Application
 
-Open your browser and navigate to:
-[http://127.0.0.1:5000](http://127.0.0.1:5000)
+Open your browser and navigate to the Live Demo:
+👉 [https://bhumika6725.github.io/TradeTrack/HTML/index.html](https://bhumika6725.github.io/TradeTrack/HTML/index.html)
+
 
 ---
 
