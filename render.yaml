@@ -3,7 +3,8 @@ services:
     name: tradetrack-pro
     runtime: python
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn app:app
+    startCommand: gunicorn --bind 0.0.0.0:$PORT app:app
     envVars:
       - key: PORT
         value: 5000
+
