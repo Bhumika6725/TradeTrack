@@ -2,433 +2,189 @@
 <html lang="en">
 
 <head>
-
-    <meta charset="UTF-8">
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>TradeTrack Pro | Settings</title>
-
     <script>
+        (function() {
+            const saved = localStorage.getItem("tradetrack_theme") || localStorage.getItem("theme") || 
+                (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+            document.documentElement.setAttribute("data-theme", saved);
+            if (saved === "dark") document.documentElement.classList.add("dark");
+        })();
         if (localStorage.getItem("isLoggedIn") !== "true") {
             localStorage.setItem("authMessage", "Please login first to continue.");
             window.location.href = "index.html";
         }
     </script>
 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings | TradeTrack Pro</title>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
-
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
     <link rel="stylesheet" href="../CSS/settings.css">
-
 </head>
 
 <body>
 
+<!-- Mobile Header Navigation Bar -->
+<div class="top-nav">
+    <button type="button" class="menu-btn" id="mobileMenuBtn" aria-label="Toggle Menu">☰</button>
+    <div class="brand-title">📈 TradeTrack Pro</div>
+    <button type="button" class="theme-toggle-btn" id="topThemeToggleBtn">🌙</button>
+</div>
+
+<!-- Mobile Sidebar Overlay Backdrop -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
 <div class="container">
 
-    <!-- ================= Sidebar ================= -->
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-top">
+            <div class="logo">
+                <h2>📈 TradeTrack Pro</h2>
+            </div>
 
-    <aside class="sidebar">
-
-        <div class="logo">
-
-            <h2>📈 TradeTrack Pro</h2>
-
+            <ul class="menu">
+                <li><a href="dashboard.html">🏠 Dashboard</a></li>
+                <li><a href="addTrade.html">➕ Add Trade</a></li>
+                <li><a href="history.html">📜 Trade History</a></li>
+                <li><a href="analytics.html">📊 Analytics</a></li>
+                <li><a href="riskCalculator.html">💰 Risk Calculator</a></li>
+                <li class="active"><a href="settings.html">⚙️ Settings</a></li>
+            </ul>
         </div>
 
-        <ul class="menu">
-
-            <li>
-
-                <a href="dashboard.html">
-
-                    🏠 Dashboard
-
-                </a>
-
-            </li>
-
-            <li>
-
-                <a href="addTrade.html">
-
-                    ➕ Add Trade
-
-                </a>
-
-            </li>
-
-            <li>
-
-                <a href="history.html">
-
-                    📜 Trade History
-
-                </a>
-
-            </li>
-
-            <li>
-
-                <a href="analytics.html">
-
-                    📊 Analytics
-
-                </a>
-
-            </li>
-
-            <li>
-
-                <a href="riskCalculator.html">
-
-                    🎯 Risk Calculator
-
-                </a>
-
-            </li>
-
-            <li class="active">
-
-                <a href="settings.html">
-
-                    ⚙️ Settings
-
-                </a>
-
-            </li>
-
-        </ul>
-
+        <div class="sidebar-footer">
+            <button type="button" class="theme-toggle-btn" id="themeToggleBtn">
+                <span class="theme-icon">🌙</span>
+                <span class="theme-text">Dark Mode</span>
+            </button>
+        </div>
     </aside>
 
-
-
-    <!-- ================= Main ================= -->
-
+    <!-- Main Content Area -->
     <main class="main-content">
 
         <div class="page-header">
-
-            <h1>⚙️ Settings</h1>
-
-            <p>
-
-                Manage your profile, preferences and application.
-
-            </p>
-
+            <h1>⚙️ Settings & Configuration</h1>
+            <p>Manage profile details, trading preferences, data backups, and security options.</p>
         </div>
 
-
-
-        <!-- ================= Profile ================= -->
-
+        <!-- Profile Section -->
         <div class="settings-card profile-card">
-
             <div class="profile-left">
-
-                <div class="avatar">
-
-                    👤
-
-                </div>
-
+                <div class="avatar">👤</div>
                 <div>
-
-                    <h2 id="profileName">
-
-                        Bhumika Niwate
-
-                    </h2>
-
-                    <p id="profileEmail">
-
-                        example@gmail.com
-
-                    </p>
-
-                    <small id="profileUsername">
-
-                        @username
-
-                    </small>
-
+                    <h2 id="profileName">Trader Profile</h2>
+                    <p id="profileEmail">trader@example.com</p>
+                    <small id="profileUsername">@trader</small>
                 </div>
-
             </div>
-
-            <button class="edit-btn">
-
-                ✏ Edit Profile
-
-            </button>
-
+            <button type="button" class="edit-btn" id="editProfileBtn">✏️ Edit Profile</button>
         </div>
 
-
-
-        <!-- ================= Personal Info ================= -->
-
+        <!-- Personal Info Form -->
         <div class="settings-card">
-
-            <h2>
-
-                👤 Personal Information
-
-            </h2>
-
+            <h2>👤 Personal Information</h2>
             <div class="grid">
-
                 <div class="input-group">
-
-                    <label>
-
-                        Full Name
-
-                    </label>
-
-                    <input
-
-                        type="text"
-
-                        id="name"
-
-                        placeholder="Enter Full Name">
-
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" placeholder="Enter Full Name">
                 </div>
 
                 <div class="input-group">
-
-                    <label>
-
-                        Email
-
-                    </label>
-
-                    <input
-
-                        type="email"
-
-                        id="email"
-
-                        placeholder="Enter Email">
-
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" placeholder="Enter Email">
                 </div>
-
             </div>
-
         </div>
- <!-- ================= Trading Preferences ================= -->
 
+        <!-- Trading Preferences -->
         <div class="settings-card">
-
             <h2>💹 Trading Preferences</h2>
-
             <div class="grid">
-
                 <div class="input-group">
-
-                    <label>Currency</label>
-
+                    <label for="currency">Base Currency</label>
                     <select id="currency">
-
-                        <option value="₹">₹ Indian Rupee</option>
-
-                        <option value="$">$ US Dollar</option>
-
-                        <option value="€">€ Euro</option>
-
+                        <option value="₹">₹ Indian Rupee (INR)</option>
+                        <option value="$">$ US Dollar (USD)</option>
+                        <option value="€">€ Euro (EUR)</option>
+                        <option value="£">£ British Pound (GBP)</option>
                     </select>
-
                 </div>
 
                 <div class="input-group">
-
-                    <label>Default Risk</label>
-
+                    <label for="risk">Default Risk per Trade</label>
                     <select id="risk">
-
-                        <option>1%</option>
-
-                        <option selected>2%</option>
-
-                        <option>3%</option>
-
-                        <option>5%</option>
-
+                        <option value="1%">1%</option>
+                        <option value="2%" selected>2%</option>
+                        <option value="3%">3%</option>
+                        <option value="5%">5%</option>
                     </select>
-
                 </div>
 
                 <div class="input-group">
-
-                    <label>Default Capital</label>
-
-                    <input
-                        type="number"
-                        id="capital"
-                        placeholder="100000">
-
+                    <label for="capital">Default Trading Capital</label>
+                    <input type="number" id="capital" placeholder="100000">
                 </div>
-
             </div>
-
         </div>
 
-
-
-        <!-- ================= Data Management ================= -->
-
+        <!-- Data Management -->
         <div class="settings-card">
-
-            <h2>📊 Data Management</h2>
-
+            <h2>📊 Data Management & Backups</h2>
             <div class="button-grid">
-
-                <button id="exportBtn" class="secondary-btn">
-
-                    📤 Export CSV
-
-                </button>
-
-                <button id="pdfBtn" class="secondary-btn">
-
-                    📄 Export PDF
-
-                </button>
-
-                <button id="backupBtn" class="secondary-btn">
-
-                    💾 Backup JSON
-
-                </button>
-
-                <button id="importBtn" class="secondary-btn">
-
-                    📥 Import Backup
-
-                </button>
-
-                <input
-                    type="file"
-                    id="importFile"
-                    hidden>
-
-                <button id="clearBtn" class="danger-btn">
-
-                    🗑 Clear All Trades
-
-                </button>
-
+                <button type="button" id="exportBtn" class="secondary-btn">📤 Export CSV</button>
+                <button type="button" id="pdfBtn" class="secondary-btn">📄 Export PDF</button>
+                <button type="button" id="backupBtn" class="secondary-btn">💾 Backup JSON</button>
+                <button type="button" id="importBtn" class="secondary-btn">📥 Import Backup</button>
+                <input type="file" id="importFile" hidden accept=".json">
+                <button type="button" id="clearBtn" class="danger-btn">🗑️ Clear All Trades</button>
             </div>
-
         </div>
-                <!-- ================= Security ================= -->
 
+        <!-- Security Section -->
         <div class="settings-card">
-
-            <h2>🔐 Security</h2>
-
+            <h2>🔐 Security & Password</h2>
             <div class="grid">
-
                 <div class="input-group">
-
-                    <label>Current Password</label>
-
-                    <input
-                        type="password"
-                        id="currentPassword"
-                        placeholder="Enter Current Password">
-
+                    <label for="currentPassword">Current Password</label>
+                    <input type="password" id="currentPassword" placeholder="Enter Current Password">
                 </div>
 
                 <div class="input-group">
-
-                    <label>New Password</label>
-
-                    <input
-                        type="password"
-                        id="newPassword"
-                        placeholder="Enter New Password">
-
+                    <label for="newPassword">New Password</label>
+                    <input type="password" id="newPassword" placeholder="Enter New Password">
                 </div>
 
                 <div class="input-group">
-
-                    <label>Confirm Password</label>
-
-                    <input
-                        type="password"
-                        id="confirmPassword"
-                        placeholder="Confirm Password">
-
+                    <label for="confirmPassword">Confirm New Password</label>
+                    <input type="password" id="confirmPassword" placeholder="Confirm New Password">
                 </div>
-
             </div>
-
             <br>
-
-            <button id="changePasswordBtn" class="btn">
-
-                🔑 Change Password
-
-            </button>
-
+            <button type="button" id="changePasswordBtn" class="btn secondary-btn">🔑 Change Password</button>
         </div>
 
-
-
-        <!-- ================= About ================= -->
-
+        <!-- About Project -->
         <div class="settings-card">
-
             <h2>ℹ️ About TradeTrack Pro</h2>
-
             <div class="about">
-
-                <p><strong>Application :</strong> TradeTrack Pro</p>
-
-                <p><strong>Version :</strong> 2.0</p>
-
+                <p><strong>Application :</strong> TradeTrack Pro FinTech Trading Journal</p>
+                <p><strong>Version :</strong> 2.0 (Portfolio Edition)</p>
                 <p><strong>Developer :</strong> Bhumika Niwate</p>
-
-                <p><strong>Technology :</strong> HTML • CSS • JavaScript</p>
-
-                <p><strong>Storage :</strong> Local Storage</p>
-
-                <p><strong>Status :</strong>
-                    <span style="color:green;font-weight:600;">
-                        Active
-                    </span>
-                </p>
-
+                <p><strong>Tech Stack :</strong> HTML5 • CSS3 • JavaScript (ES6) • Chart.js</p>
+                <p><strong>Storage Engine :</strong> HTML5 LocalStorage Persistence</p>
+                <p><strong>Status :</strong> <span style="color:var(--profit-color);font-weight:600;">Active & Deployed</span></p>
             </div>
-
         </div>
 
-
-
-        <!-- ================= Footer Buttons ================= -->
-
+        <!-- Action Buttons Footer -->
         <div class="button-group">
-
-            <button id="saveBtn">
-
-                💾 Save Changes
-
-            </button>
-
-            <button id="logoutBtn" class="danger-btn">
-
-                🚪 Logout
-
-            </button>
-
+            <button type="button" id="saveBtn">💾 Save Settings</button>
+            <button type="button" id="logoutBtn" class="danger-btn">🚪 Logout</button>
         </div>
 
     </main>
@@ -436,7 +192,6 @@
 </div>
 
 <script src="../JS/settings.js"></script>
-
 </body>
 
 </html>

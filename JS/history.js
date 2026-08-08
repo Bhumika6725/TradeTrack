@@ -1,17 +1,81 @@
 // ==========================================
-// TradeTrack Pro
-// Trade History
+// TradeTrack Pro - Trade History Logic
 // ==========================================
-// ==============================
-// Apply Saved Theme
-// ==============================
 
-if(localStorage.getItem("isLoggedIn") !== "true"){
+document.addEventListener("DOMContentLoaded", () => {
+    initAuthCheck();
+    initTheme();
+    initMobileNav();
+    loadTrades();
+});
 
-    window.location.href = "index.html";
-
+function initAuthCheck() {
+    if (localStorage.getItem("isLoggedIn") !== "true") {
+        localStorage.setItem("authMessage", "Please login first to continue.");
+        window.location.href = "index.html";
+    }
 }
-const tradeTable = document.getElementById("tradeTable");
+
+function initTheme() {
+    const saved = localStorage.getItem("tradetrack_theme") || localStorage.getItem("theme") ||
+        (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    applyTheme(saved);
+
+    const toggleBtns = document.querySelectorAll("#themeToggleBtn, #topThemeToggleBtn, .theme-toggle-btn");
+    toggleBtns.forEach(btn => {
+        btn.addEventListener("click", () => {
+            const current = document.documentElement.getAttribute("data-theme") || "light";
+            const next = current === "dark" ? "light" : "dark";
+            applyTheme(next);
+        });
+    });
+}
+
+function applyTheme(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+    if (theme === "dark") {
+        document.documentElement.classList.add("dark");
+        document.body.classList.add("dark");
+    } else {
+        document.documentElement.classList.remove("dark");
+        document.body.classList.remove("dark");
+    }
+    localStorage.setItem("tradetrack_theme", theme);
+    localStorage.setItem("theme", theme);
+
+    const toggleBtns = document.querySelectorAll("#themeToggleBtn, #topThemeToggleBtn, .theme-toggle-btn");
+    toggleBtns.forEach(btn => {
+        const icon = btn.querySelector(".theme-icon");
+        const text = btn.querySelector(".theme-text");
+        if (theme === "dark") {
+            if (icon) icon.textContent = "☀️";
+            if (text) text.textContent = "Light Mode";
+            if (btn.id === "topThemeToggleBtn") btn.textContent = "☀️";
+        } else {
+            if (icon) icon.textContent = "🌙";
+            if (text) text.textContent = "Dark Mode";
+            if (btn.id === "topThemeToggleBtn") btn.textContent = "🌙";
+        }
+    });
+}
+
+function initMobileNav() {
+    const menuBtn = document.getElementById("mobileMenuBtn");
+    const sidebar = document.getElementById("sidebar");
+    const overlay = document.getElementById("sidebarOverlay");
+
+    if (menuBtn && sidebar && overlay) {
+        menuBtn.addEventListener("click", () => {
+            sidebar.classList.toggle("active");
+            overlay.classList.toggle("active");
+        });
+
+        overlay.addEventListener("click", () => {
+            sidebar.classList.remove("active");
+            overlay.classList.remove("active");
+        });
+    }
+}
 
 const currencySymbol = localStorage.getItem("currency") || "₹";
 
@@ -27,7 +91,7 @@ function escapeHTML(str) {
 
 function formatNotes(notes, index) {
     if (!notes) return '<span class="no-notes">-</span>';
-    const limit = 50;
+    const limit = 40;
     if (notes.length <= limit) {
         return `<span class="note-text-container">${escapeHTML(notes)}</span>`;
     }
@@ -63,16 +127,23 @@ window.openNotesModal = function(index) {
     const trade = trades[index];
     if (!trade) return;
     
-    document.getElementById("modalStock").textContent = trade.stock || "N/A";
+    const stockEl = document.getElementById("modalStock");
+    if (stockEl) stockEl.textContent = trade.stock || "N/A";
+
     const badge = document.getElementById("modalTypeBadge");
     if (badge) {
         badge.textContent = trade.type || "BUY";
         badge.className = `badge ${trade.type === "BUY" ? "buy-badge" : "sell-badge"}`;
     }
     
-    document.getElementById("modalEntry").textContent = currencySymbol + Number(trade.entry || 0).toFixed(2);
-    document.getElementById("modalExit").textContent = currencySymbol + Number(trade.exit || 0).toFixed(2);
-    document.getElementById("modalQty").textContent = trade.quantity || 0;
+    const entryEl = document.getElementById("modalEntry");
+    if (entryEl) entryEl.textContent = currencySymbol + Number(trade.entry || 0).toFixed(2);
+
+    const exitEl = document.getElementById("modalExit");
+    if (exitEl) exitEl.textContent = currencySymbol + Number(trade.exit || 0).toFixed(2);
+
+    const qtyEl = document.getElementById("modalQty");
+    if (qtyEl) qtyEl.textContent = trade.quantity || 0;
     
     const pnl = Number(trade.pnl) || 0;
     const pnlEl = document.getElementById("modalPnL");
@@ -81,9 +152,11 @@ window.openNotesModal = function(index) {
         pnlEl.className = `stat-val ${pnl >= 0 ? "profit" : "loss"}`;
     }
     
-    document.getElementById("modalReason").textContent = trade.strategy || "General";
-    document.getElementById("modalNotes").textContent = trade.notes || "No notes added";
-    document.getElementById("modalLessons").textContent = trade.emotion || "Neutral";
+    const reasonEl = document.getElementById("modalReason");
+    if (reasonEl) reasonEl.textContent = trade.strategy || "General Setup";
+
+    const notesEl = document.getElementById("modalNotes");
+    if (notesEl) notesEl.textContent = trade.notes || "No additional notes recorded.";
     
     const modal = document.getElementById("notesModal");
     if (modal) {
@@ -98,134 +171,66 @@ window.closeNotesModal = function() {
     }
 };
 
-// =========================
-// Load Trades
-// =========================
-
 function loadTrades() {
+    const tradeTable = document.getElementById("tradeTable");
+    if (!tradeTable) return;
 
     let trades = JSON.parse(localStorage.getItem("trades")) || [];
-
     tradeTable.innerHTML = "";
 
     if (trades.length === 0) {
-
         tradeTable.innerHTML = `
             <tr>
-                <td colspan="15">No Trades Found 📭</td>
+                <td colspan="11" style="text-align:center; padding: 30px; color: var(--text-muted);">
+                    No Trades Found 📭<br><small>Click 'Add Trade' to start tracking your journey.</small>
+                </td>
             </tr>
         `;
-
         return;
     }
 
     trades.forEach((trade, index) => {
-
-        const pnlClass = trade.pnl >= 0 ? "profit" : "loss";
+        const pnlVal = Number(trade.pnl) || 0;
+        const pnlClass = pnlVal >= 0 ? "profit" : "loss";
 
         tradeTable.innerHTML += `
-
         <tr>
-
             <td>
-                <a href="#" style="text-decoration: none; color: #2563eb; font-weight: 600;" onclick="openNotesModal(${index}); return false;">
-                    ${trade.stock}
+                <a href="#" style="text-decoration: none; color: var(--accent-blue); font-weight: 600;" onclick="openNotesModal(${index}); return false;">
+                    ${escapeHTML(trade.stock)}
                 </a>
             </td>
-
-            <td>${trade.type}</td>
-
-            <td>${currencySymbol}${trade.entry}</td>
-
-            <td>${currencySymbol}${trade.exit}</td>
-
-            <td>${trade.quantity}</td>
-
-
-            <td class="${pnlClass}">
-                ${currencySymbol}${trade.pnl}
-            </td>
-
-            <td>${trade.strategy}</td>
-
-            <td>${trade.emotion}</td>
-
-            <td>${trade.date}</td>
-
+            <td><strong>${trade.type}</strong></td>
+            <td>${currencySymbol}${Number(trade.entry || 0).toFixed(2)}</td>
+            <td>${currencySymbol}${Number(trade.exit || 0).toFixed(2)}</td>
+            <td>${trade.quantity || 0}</td>
+            <td class="${pnlClass}">${currencySymbol}${pnlVal.toFixed(2)}</td>
+            <td>${escapeHTML(trade.strategy || "-")}</td>
+            <td>${escapeHTML(trade.emotion || "-")}</td>
+            <td>${trade.date || "-"}</td>
+            <td>${formatNotes(trade.notes, index)}</td>
             <td>
-                ${formatNotes(trade.notes, index)}
+                <button class="edit-btn" onclick="editTrade(${index})">Edit</button>
+                <button class="delete-btn" onclick="deleteTrade(${index})">Delete</button>
             </td>
-
-            <td>
-
-                <button
-                    class="edit-btn"
-                    onclick="editTrade(${index})">
-
-                    Edit
-
-                </button>
-
-                <button
-                    class="delete-btn"
-                    onclick="deleteTrade(${index})">
-
-                    Delete
-
-                </button>
-
-            </td>
-
         </tr>
-
         `;
-
     });
-
 }
 
-// =========================
-// Delete Trade
-// =========================
-
-function deleteTrade(index) {
-
-    if (!confirm("Delete this trade?")) {
-
+window.deleteTrade = function(index) {
+    if (!confirm("Are you sure you want to delete this trade record?")) {
         return;
-
     }
-
     let trades = JSON.parse(localStorage.getItem("trades")) || [];
-
     trades.splice(index, 1);
-
     localStorage.setItem("trades", JSON.stringify(trades));
-
     loadTrades();
+};
 
-}
-
-// =========================
-// Edit Trade
-// =========================
-
-function editTrade(index) {
-
+window.editTrade = function(index) {
     let trades = JSON.parse(localStorage.getItem("trades")) || [];
-
     localStorage.setItem("editTradeIndex", index);
-
     localStorage.setItem("editTradeData", JSON.stringify(trades[index]));
-
-    alert("Opening trade for editing...");
-
     window.location.href = "addTrade.html";
-
-}
-
-// =========================
-// Load Page
-// =========================
-
-loadTrades();
+};

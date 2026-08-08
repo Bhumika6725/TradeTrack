@@ -2,218 +2,159 @@
 <html lang="en">
 
 <head>
-
-    <meta charset="UTF-8">
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Dashboard | TradeTrack Pro</title>
-
     <script>
+        (function() {
+            const saved = localStorage.getItem("tradetrack_theme") || localStorage.getItem("theme") || 
+                (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+            document.documentElement.setAttribute("data-theme", saved);
+            if (saved === "dark") document.documentElement.classList.add("dark");
+        })();
         if (localStorage.getItem("isLoggedIn") !== "true") {
             localStorage.setItem("authMessage", "Please login first to continue.");
             window.location.href = "index.html";
         }
     </script>
 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | TradeTrack Pro</title>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
-
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
     <link rel="stylesheet" href="../CSS/dashboard.css">
-
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 </head>
 
 <body>
 
+<!-- Mobile Header Navigation Bar -->
+<div class="top-nav">
+    <button type="button" class="menu-btn" id="mobileMenuBtn" aria-label="Toggle Menu">☰</button>
+    <div class="brand-title">📈 TradeTrack Pro</div>
+    <button type="button" class="theme-toggle-btn" id="topThemeToggleBtn">🌙</button>
+</div>
+
+<!-- Mobile Sidebar Backdrop Overlay -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
 <div class="container">
 
-    <!-- Sidebar -->
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-top">
+            <div class="logo">
+                <h2>📈 TradeTrack Pro</h2>
+            </div>
 
-    <aside class="sidebar">
-
-        <div class="logo">
-
-            <h2>📈 TradeTrack Pro</h2>
-
+            <ul class="menu">
+                <li class="active">
+                    <a href="dashboard.html">🏠 Dashboard</a>
+                </li>
+                <li>
+                    <a href="addTrade.html">➕ Add Trade</a>
+                </li>
+                <li>
+                    <a href="history.html">📜 Trade History</a>
+                </li>
+                <li>
+                    <a href="analytics.html">📊 Analytics</a>
+                </li>
+                <li>
+                    <a href="riskCalculator.html">💰 Risk Calculator</a>
+                </li>
+                <li>
+                    <a href="settings.html">⚙️ Settings</a>
+                </li>
+            </ul>
         </div>
 
-        <ul class="menu">
-
-            <li class="active">
-                <a href="dashboard.html">🏠 Dashboard</a>
-            </li>
-
-            <li>
-                <a href="addTrade.html">➕ Add Trade</a>
-            </li>
-
-            <li>
-                <a href="history.html">📜 Trade History</a>
-            </li>
-
-            <li>
-                <a href="analytics.html">📊 Analytics</a>
-            </li>
-
-            <li>
-                <a href="riskCalculator.html">💰 Risk Calculator</a>
-            </li>
-
-            <li>
-                <a href="settings.html">⚙️ Settings</a>
-            </li>
-
-        </ul>
-
+        <div class="sidebar-footer">
+            <button type="button" class="theme-toggle-btn" id="themeToggleBtn">
+                <span class="theme-icon">🌙</span>
+                <span class="theme-text">Dark Mode</span>
+            </button>
+        </div>
     </aside>
 
-    <!-- Main -->
-
+    <!-- Main Content Area -->
     <main class="main-content">
 
         <div class="header">
-
             <div>
-
                 <h1 id="welcomeText">Welcome Trader 👋</h1>
-
                 <p id="todayDate"></p>
-
             </div>
-
         </div>
 
-        <!-- Cards -->
-
+        <!-- Summary Cards Grid -->
         <section class="cards">
-
             <div class="card">
-
                 <h3>Total Trades</h3>
-
                 <h2 id="totalTrades">0</h2>
-
             </div>
-
             <div class="card">
-
                 <h3>Win Rate</h3>
-
                 <h2 id="winRate">0%</h2>
-
             </div>
-
             <div class="card">
-
                 <h3>Net Profit</h3>
-
                 <h2 id="netProfit">₹0</h2>
-
             </div>
-
             <div class="card">
-
                 <h3>Today's Profit</h3>
-
                 <h2 id="todayProfit">₹0</h2>
-
             </div>
-
         </section>
 
-        <!-- Weekly Chart -->
-
+        <!-- Weekly Performance Chart -->
         <section class="chart-section">
-
-            <h2>📈 Weekly Performance</h2>
-
+            <h2>📈 Weekly Performance Breakdown</h2>
             <canvas id="weeklyChart"></canvas>
-
         </section>
 
-        <!-- Recent Trades -->
-
+        <!-- Recent Trades Table -->
         <section class="recent">
-
             <h2>🕒 Recent Trades</h2>
-
-            <table>
-
-                <thead>
-
-                    <tr>
-
-                        <th>Stock</th>
-
-                        <th>Type</th>
-
-                        <th>P/L</th>
-
-                        <th>Date</th>
-
-                    </tr>
-
-                </thead>
-
-                <tbody id="recentTrades">
-
-                </tbody>
-
-            </table>
-
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Stock</th>
+                            <th>Type</th>
+                            <th>P/L</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recentTrades"></tbody>
+                </table>
+            </div>
         </section>
 
-        <!-- Quick Stats -->
-
+        <!-- Quick Stats Grid -->
         <section class="stats">
-
             <div class="stat-box">
-
                 <h3>🏆 Best Stock</h3>
-
                 <h2 id="bestStock">-</h2>
-
             </div>
-
             <div class="stat-box">
-
                 <h3>📊 Best Strategy</h3>
-
                 <h2 id="bestStrategy">-</h2>
-
             </div>
-
             <div class="stat-box">
-
                 <h3>💰 Biggest Profit</h3>
-
                 <h2 id="bigProfit">₹0</h2>
-
             </div>
-
             <div class="stat-box">
-
                 <h3>📉 Biggest Loss</h3>
-
                 <h2 id="bigLoss">₹0</h2>
-
             </div>
-
         </section>
 
-        <!-- Trading Tip -->
-
+        <!-- Trading Tip Box -->
         <section class="tip-box">
-
-            <h2>💡 Trading Tip</h2>
-
+            <h2>💡 Trading Discipline Rule</h2>
             <p id="tradingTip"></p>
-
         </section>
 
     </main>
@@ -221,7 +162,6 @@
 </div>
 
 <script src="../JS/dashboard.js"></script>
-
 </body>
 
-</html>
+</html>

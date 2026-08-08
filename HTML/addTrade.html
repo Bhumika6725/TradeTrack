@@ -2,241 +2,156 @@
 <html lang="en">
 
 <head>
-
-    <meta charset="UTF-8">
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Add Trade | TradeTrack Pro</title>
-
     <script>
+        (function() {
+            const saved = localStorage.getItem("tradetrack_theme") || localStorage.getItem("theme") || 
+                (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+            document.documentElement.setAttribute("data-theme", saved);
+            if (saved === "dark") document.documentElement.classList.add("dark");
+        })();
         if (localStorage.getItem("isLoggedIn") !== "true") {
             localStorage.setItem("authMessage", "Please login first to continue.");
             window.location.href = "index.html";
         }
     </script>
 
-    <!-- Google Font -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Trade | TradeTrack Pro</title>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
-
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
-
-    <!-- CSS -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../CSS/addTrade.css">
-
 </head>
 
 <body>
 
+<!-- Mobile Header Navigation Bar -->
+<div class="top-nav">
+    <button type="button" class="menu-btn" id="mobileMenuBtn" aria-label="Toggle Menu">☰</button>
+    <div class="brand-title">📈 TradeTrack Pro</div>
+    <button type="button" class="theme-toggle-btn" id="topThemeToggleBtn">🌙</button>
+</div>
+
+<!-- Mobile Sidebar Overlay Backdrop -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
 <div class="container">
 
-    <!-- Sidebar -->
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-top">
+            <div class="logo">
+                <h2>📈 TradeTrack Pro</h2>
+            </div>
 
-    <aside class="sidebar">
-
-        <div class="logo">
-
-            <h2>📈 TradeTrack Pro</h2>
-
+            <ul class="menu">
+                <li>
+                    <a href="dashboard.html">🏠 Dashboard</a>
+                </li>
+                <li class="active">
+                    <a href="addTrade.html">➕ Add Trade</a>
+                </li>
+                <li>
+                    <a href="history.html">📜 Trade History</a>
+                </li>
+                <li>
+                    <a href="analytics.html">📊 Analytics</a>
+                </li>
+                <li>
+                    <a href="riskCalculator.html">💰 Risk Calculator</a>
+                </li>
+                <li>
+                    <a href="settings.html">⚙️ Settings</a>
+                </li>
+            </ul>
         </div>
 
-        <ul class="menu">
-
-            <li>
-                <a href="dashboard.html">🏠 Dashboard</a>
-            </li>
-
-            <li class="active">
-                <a href="addTrade.html">➕ Add Trade</a>
-            </li>
-
-            <li>
-                <a href="history.html">📜 Trade History</a>
-            </li>
-
-            <li>
-                <a href="analytics.html">📊 Analytics</a>
-            </li>
-
-            <l>
-                <li><a href="riskCalculator.html">💰 Risk Calculator</a></li>
-            </li>
-
-            <li>
-                <a href="settings.html">⚙️ Settings</a>
-            </li>
-
-        </ul>
-
+        <div class="sidebar-footer">
+            <button type="button" class="theme-toggle-btn" id="themeToggleBtn">
+                <span class="theme-icon">🌙</span>
+                <span class="theme-text">Dark Mode</span>
+            </button>
+        </div>
     </aside>
 
-    <!-- Main -->
-
+    <!-- Main Content Area -->
     <main class="main">
 
         <div class="page-title">
-
             <h1>Add New Trade</h1>
-
             <p>Record every trade. Improve every day.</p>
-
         </div>
 
         <form id="tradeForm">
-
             <div class="grid">
-
-                <!-- Stock -->
-
+                <!-- Stock Name -->
                 <div class="input-box">
-
-                    <label>Index / Stock Name</label>
-
-                    <input
-                        type="text"
-                        id="stock"
-                        placeholder="Example : Nifty , TCS"
-                        required>
-
+                    <label for="stock">Index / Stock Name</label>
+                    <input type="text" id="stock" placeholder="Example : Nifty, TCS" required>
                 </div>
 
                 <!-- Trade Type -->
-
                 <div class="input-box">
-
-                    <label>Trade Type</label>
-
+                    <label for="type">Trade Type</label>
                     <select id="type">
-
                         <option value="BUY">BUY</option>
-
                         <option value="SELL">SELL</option>
-
                     </select>
-
                 </div>
 
-                <!-- Entry -->
-
+                <!-- Entry Price -->
                 <div class="input-box">
-
-                    <label>Entry Price</label>
-
-                    <input
-                        type="number"
-                        id="entry"
-                        placeholder="Enter Entry Price"
-                        required>
-
+                    <label for="entry">Entry Price</label>
+                    <input type="number" step="any" id="entry" placeholder="Enter Entry Price" required>
                 </div>
 
-                <!-- Exit -->
-
+                <!-- Exit Price -->
                 <div class="input-box">
-
-                    <label>Exit Price</label>
-
-                    <input
-                        type="number"
-                        id="exit"
-                        placeholder="Enter Exit Price"
-                        required>
-
+                    <label for="exit">Exit Price</label>
+                    <input type="number" step="any" id="exit" placeholder="Enter Exit Price" required>
                 </div>
 
                 <!-- Quantity -->
-
                 <div class="input-box">
-
-                    <label>Quantity</label>
-
-                    <input
-                        type="number"
-                        id="quantity"
-                        placeholder="Enter Quantity"
-                        required>
-
+                    <label for="quantity">Quantity</label>
+                    <input type="number" id="quantity" placeholder="Enter Quantity" required>
                 </div>
 
                 <!-- Strategy -->
-
                 <div class="input-box">
-
-                    <label>Strategy</label>
-
-                    <input
-                        type="text"
-                        id="strategy"
-                        placeholder="Breakout, Scalping, Swing..."
-                        required>
-
+                    <label for="strategy">Strategy</label>
+                    <input type="text" id="strategy" placeholder="Breakout, Scalping, Swing..." required>
                 </div>
 
                 <!-- Emotion -->
-
                 <div class="input-box">
-
-                    <label>Emotion</label>
-
-                    <input
-                        type="text"
-                        id="emotion"
-                        placeholder="Happy, Fear, Angry..."
-                        required>
-
+                    <label for="emotion">Emotion / Psychology</label>
+                    <input type="text" id="emotion" placeholder="Calm, Confident, Fearful..." required>
                 </div>
 
-                <!-- Date -->
-
+                <!-- Trade Date -->
                 <div class="input-box">
-
-                    <label>Trade Date</label>
-
-                    <input
-                        type="date"
-                        id="date"
-                        required>
-
+                    <label for="date">Trade Date</label>
+                    <input type="date" id="date" required>
                 </div>
-
             </div>
 
             <!-- Notes -->
-
             <div class="notes">
-
-                <label>Trade Notes</label>
-
-                <textarea
-                    id="notes"
-                    rows="6"
-                    placeholder="Write your trading observations..."></textarea>
-
+                <label for="notes">Trade Notes & Observations</label>
+                <textarea id="notes" rows="6" placeholder="Write your setup details and trade observations..."></textarea>
             </div>
 
-            <!-- PNL -->
-
+            <!-- Calculated Profit / Loss -->
             <div class="summary">
-
-                <h2>Profit / Loss</h2>
-
+                <h2>Calculated Profit / Loss</h2>
                 <h1 id="pnl">₹0</h1>
-
             </div>
 
-            <!-- Button -->
-
-            <button
-                type="submit"
-                class="save-btn">
-
-                Save Trade
-
-            </button>
-
+            <!-- Submit Button -->
+            <button type="submit" class="save-btn">Save Trade Log</button>
         </form>
 
     </main>
@@ -244,7 +159,6 @@
 </div>
 
 <script src="../JS/addTrade.js"></script>
-
 </body>
 
-</html>
+</html>

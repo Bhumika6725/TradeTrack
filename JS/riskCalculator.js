@@ -1,98 +1,144 @@
 // ==========================================
-// TradeTrack Pro - Risk Calculator
+// TradeTrack Pro - Risk Calculator Logic
 // ==========================================
 
-if (localStorage.getItem("isLoggedIn") !== "true") {
-    localStorage.setItem("authMessage", "Please login first to continue.");
-    window.location.href = "index.html";
+document.addEventListener("DOMContentLoaded", () => {
+    initAuthCheck();
+    initTheme();
+    initMobileNav();
+    initCalculator();
+});
+
+function initAuthCheck() {
+    if (localStorage.getItem("isLoggedIn") !== "true") {
+        localStorage.setItem("authMessage", "Please login first to continue.");
+        window.location.href = "index.html";
+    }
 }
 
-const capital = document.getElementById("capital");
-const riskPercent = document.getElementById("riskPercent");
-const entryPrice = document.getElementById("entryPrice");
-const stopLoss = document.getElementById("stopLoss");
+function initTheme() {
+    const saved = localStorage.getItem("tradetrack_theme") || localStorage.getItem("theme") ||
+        (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    applyTheme(saved);
 
-const calculateBtn = document.getElementById("calculateBtn");
+    const toggleBtns = document.querySelectorAll("#themeToggleBtn, #topThemeToggleBtn, .theme-toggle-btn");
+    toggleBtns.forEach(btn => {
+        btn.addEventListener("click", () => {
+            const current = document.documentElement.getAttribute("data-theme") || "light";
+            const next = current === "dark" ? "light" : "dark";
+            applyTheme(next);
+        });
+    });
+}
 
-// Outputs
-const riskAmount = document.getElementById("riskAmount");
-const riskPerShare = document.getElementById("riskPerShare");
-const quantity = document.getElementById("quantity");
-const positionSize = document.getElementById("positionSize");
+function applyTheme(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+    if (theme === "dark") {
+        document.documentElement.classList.add("dark");
+        document.body.classList.add("dark");
+    } else {
+        document.documentElement.classList.remove("dark");
+        document.body.classList.remove("dark");
+    }
+    localStorage.setItem("tradetrack_theme", theme);
+    localStorage.setItem("theme", theme);
 
-const currencySymbol = localStorage.getItem("currency") || "₹";
+    const toggleBtns = document.querySelectorAll("#themeToggleBtn, #topThemeToggleBtn, .theme-toggle-btn");
+    toggleBtns.forEach(btn => {
+        const icon = btn.querySelector(".theme-icon");
+        const text = btn.querySelector(".theme-text");
+        if (theme === "dark") {
+            if (icon) icon.textContent = "☀️";
+            if (text) text.textContent = "Light Mode";
+            if (btn.id === "topThemeToggleBtn") btn.textContent = "☀️";
+        } else {
+            if (icon) icon.textContent = "🌙";
+            if (text) text.textContent = "Dark Mode";
+            if (btn.id === "topThemeToggleBtn") btn.textContent = "🌙";
+        }
+    });
+}
 
-// ==========================================
-// Pre-populate Default Values from Settings
-// ==========================================
-function loadDefaultPreferences() {
+function initMobileNav() {
+    const menuBtn = document.getElementById("mobileMenuBtn");
+    const sidebar = document.getElementById("sidebar");
+    const overlay = document.getElementById("sidebarOverlay");
+
+    if (menuBtn && sidebar && overlay) {
+        menuBtn.addEventListener("click", () => {
+            sidebar.classList.toggle("active");
+            overlay.classList.toggle("active");
+        });
+
+        overlay.addEventListener("click", () => {
+            sidebar.classList.remove("active");
+            overlay.classList.remove("active");
+        });
+    }
+}
+
+function initCalculator() {
+    const capital = document.getElementById("capital");
+    const riskPercent = document.getElementById("riskPercent");
+    const entryPrice = document.getElementById("entryPrice");
+    const stopLoss = document.getElementById("stopLoss");
+    const calculateBtn = document.getElementById("calculateBtn");
+
+    const riskAmount = document.getElementById("riskAmount");
+    const riskPerShare = document.getElementById("riskPerShare");
+    const quantity = document.getElementById("quantity");
+    const positionSize = document.getElementById("positionSize");
+
+    const currencySymbol = localStorage.getItem("currency") || "₹";
+
+    // Load defaults from Settings
     const savedCapital = localStorage.getItem("capital");
     const savedRisk = localStorage.getItem("defaultRisk");
 
-    if (savedCapital) {
-        capital.value = savedCapital;
-    }
-    if (savedRisk) {
-        // Remove '%' sign if present in saved settings
-        riskPercent.value = savedRisk.replace("%", "").trim();
-    }
-    
-    // Set default currency label in outputs on load
-    riskAmount.innerHTML = currencySymbol + "0";
-    riskPerShare.innerHTML = currencySymbol + "0";
-    quantity.innerHTML = "0";
-    positionSize.innerHTML = currencySymbol + "0";
-}
+    if (savedCapital && capital && !capital.value) capital.value = savedCapital;
+    if (savedRisk && riskPercent && !riskPercent.value) riskPercent.value = savedRisk.replace("%", "").trim();
 
-// ==========================================
-// Calculate Function
-// ==========================================
-function calculateRisk() {
-    let cap = Number(capital.value);
-    let risk = Number(riskPercent.value);
-    let entry = Number(entryPrice.value);
-    let sl = Number(stopLoss.value);
+    function calculateRisk() {
+        if (!capital || !riskPercent || !entryPrice || !stopLoss) return;
 
-    // Validation
-    if (cap <= 0 || risk <= 0 || entry <= 0 || sl <= 0) {
-        riskAmount.innerHTML = currencySymbol + "0";
-        riskPerShare.innerHTML = currencySymbol + "0";
-        quantity.innerHTML = "0";
-        positionSize.innerHTML = currencySymbol + "0";
-        return;
-    }
+        const cap = parseFloat(capital.value);
+        const risk = parseFloat(riskPercent.value);
+        const entry = parseFloat(entryPrice.value);
+        const sl = parseFloat(stopLoss.value);
 
-    let totalRisk = cap * risk / 100;
-    let perShareRisk = Math.abs(entry - sl);
+        if (isNaN(cap) || isNaN(risk) || isNaN(entry) || isNaN(sl) || cap <= 0 || risk <= 0 || entry <= 0 || sl <= 0) {
+            if (riskAmount) riskAmount.innerHTML = currencySymbol + "0.00";
+            if (riskPerShare) riskPerShare.innerHTML = currencySymbol + "0.00";
+            if (quantity) quantity.innerHTML = "0";
+            if (positionSize) positionSize.innerHTML = currencySymbol + "0.00";
+            return;
+        }
 
-    if (perShareRisk === 0) {
-        alert("Entry Price and Stop Loss cannot be the same.");
-        return;
+        const totalRisk = cap * (risk / 100);
+        const perShareRisk = Math.abs(entry - sl);
+
+        if (perShareRisk === 0) {
+            alert("Entry Price and Stop Loss cannot be identical.");
+            return;
+        }
+
+        const qty = Math.floor(totalRisk / perShareRisk);
+        const totalPosition = qty * entry;
+
+        if (riskAmount) riskAmount.innerHTML = currencySymbol + totalRisk.toFixed(2);
+        if (riskPerShare) riskPerShare.innerHTML = currencySymbol + perShareRisk.toFixed(2);
+        if (quantity) quantity.innerHTML = qty;
+        if (positionSize) positionSize.innerHTML = currencySymbol + totalPosition.toFixed(2);
     }
 
-    let qty = Math.floor(totalRisk / perShareRisk);
-    let totalPosition = qty * entry;
+    if (calculateBtn) calculateBtn.addEventListener("click", calculateRisk);
 
-    // Display
-    riskAmount.innerHTML = currencySymbol + totalRisk.toFixed(2);
-    riskPerShare.innerHTML = currencySymbol + perShareRisk.toFixed(2);
-    quantity.innerHTML = qty;
-    positionSize.innerHTML = currencySymbol + totalPosition.toFixed(2);
-}
+    if (capital) capital.addEventListener("input", calculateRisk);
+    if (riskPercent) riskPercent.addEventListener("input", calculateRisk);
+    if (entryPrice) entryPrice.addEventListener("input", calculateRisk);
+    if (stopLoss) stopLoss.addEventListener("input", calculateRisk);
 
-// ==========================================
-// Events
-// ==========================================
-calculateBtn.addEventListener("click", calculateRisk);
-
-capital.addEventListener("input", calculateRisk);
-riskPercent.addEventListener("input", calculateRisk);
-entryPrice.addEventListener("input", calculateRisk);
-stopLoss.addEventListener("input", calculateRisk);
-
-// Load default settings on page script execution
-loadDefaultPreferences();
-// Run calculation if defaults were pre-populated
-if (capital.value && riskPercent.value && entryPrice.value && stopLoss.value) {
-    calculateRisk();
-}
+    if (capital && capital.value && riskPercent && riskPercent.value && entryPrice && entryPrice.value && stopLoss && stopLoss.value) {
+        calculateRisk();
+    }
+}

@@ -1,194 +1,213 @@
-// ======================================
-// TradeTrack Pro
-// Add Trade JavaScript
-// ======================================
-// ==============================
-// Apply Saved Theme
-// ==============================
+// ==========================================
+// TradeTrack Pro - Add / Edit Trade Logic
+// ==========================================
 
+document.addEventListener("DOMContentLoaded", () => {
+    initAuthCheck();
+    initTheme();
+    initMobileNav();
+    initTradeForm();
+});
 
-
-console.log("JS Loaded");
-// ---------- Form Elements ----------
-if(localStorage.getItem("isLoggedIn") !== "true"){
-
-    window.location.href = "index.html";
-
+function initAuthCheck() {
+    if (localStorage.getItem("isLoggedIn") !== "true") {
+        localStorage.setItem("authMessage", "Please login first to continue.");
+        window.location.href = "index.html";
+    }
 }
 
-const tradeForm = document.getElementById("tradeForm");
+function initTheme() {
+    const saved = localStorage.getItem("tradetrack_theme") || localStorage.getItem("theme") ||
+        (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    applyTheme(saved);
 
-const stock = document.getElementById("stock");
-const type = document.getElementById("type");
-const entry = document.getElementById("entry");
-const exit = document.getElementById("exit");
-const quantity = document.getElementById("quantity");
-const strategy = document.getElementById("strategy");
-const emotion = document.getElementById("emotion");
-const date = document.getElementById("date");
-const notes = document.getElementById("notes");
-
-const pnl = document.getElementById("pnl");
-
-// ---------- Auto Today's Date ----------
-
-date.value = new Date().toISOString().split("T")[0];
-
-const currencySymbol = localStorage.getItem("currency") || "₹";
-
-// ---------- Live Profit / Loss ----------
-
-function calculatePnL() {
-
-    const entryPrice = Number(entry.value);
-    const exitPrice = Number(exit.value);
-    const qty = Number(quantity.value);
-
-    if (!entryPrice || !exitPrice || !qty) {
-
-        pnl.innerHTML = currencySymbol + "0";
-        pnl.style.color = "#2563eb";
-        return;
-
-    }
-
-    let result = 0;
-
-    if (type.value === "BUY") {
-
-        result = (exitPrice - entryPrice) * qty;
-
-    } else {
-
-        result = (entryPrice - exitPrice) * qty;
-
-    }
-
-    pnl.innerHTML = currencySymbol + result.toFixed(2);
-
-    if (result >= 0) {
-
-        pnl.style.color = "#16a34a";
-
-    } else {
-
-        pnl.style.color = "#dc2626";
-
-    }
-
+    const toggleBtns = document.querySelectorAll("#themeToggleBtn, #topThemeToggleBtn, .theme-toggle-btn");
+    toggleBtns.forEach(btn => {
+        btn.addEventListener("click", () => {
+            const current = document.documentElement.getAttribute("data-theme") || "light";
+            const next = current === "dark" ? "light" : "dark";
+            applyTheme(next);
+        });
+    });
 }
 
-// ---------- Live Events ----------
+function applyTheme(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+    if (theme === "dark") {
+        document.documentElement.classList.add("dark");
+        document.body.classList.add("dark");
+    } else {
+        document.documentElement.classList.remove("dark");
+        document.body.classList.remove("dark");
+    }
+    localStorage.setItem("tradetrack_theme", theme);
+    localStorage.setItem("theme", theme);
 
-entry.addEventListener("input", calculatePnL);
-exit.addEventListener("input", calculatePnL);
-quantity.addEventListener("input", calculatePnL);
-type.addEventListener("change", calculatePnL);
-
-// ---------- Edit Mode Check & Load ----------
-let editIndex = localStorage.getItem("editTradeIndex");
-let isEditMode = editIndex !== null && editIndex !== undefined && editIndex !== "";
-
-if (isEditMode) {
-    try {
-        const editData = JSON.parse(localStorage.getItem("editTradeData"));
-        if (editData) {
-            stock.value = editData.stock || "";
-            type.value = editData.type || "BUY";
-            entry.value = editData.entry || "";
-            exit.value = editData.exit || "";
-            quantity.value = editData.quantity || "";
-            strategy.value = editData.strategy || "";
-            emotion.value = editData.emotion || "";
-            date.value = editData.date || new Date().toISOString().split("T")[0];
-            notes.value = editData.notes || "";
-            
-            // Recalculate P&L
-            calculatePnL();
-            
-            // Update Title & Button Text
-            const pageTitle = document.querySelector(".page-title h1");
-            if (pageTitle) pageTitle.textContent = "Edit Trade";
-            
-            const submitBtn = document.querySelector(".save-btn");
-            if (submitBtn) submitBtn.textContent = "Update Trade";
+    const toggleBtns = document.querySelectorAll("#themeToggleBtn, #topThemeToggleBtn, .theme-toggle-btn");
+    toggleBtns.forEach(btn => {
+        const icon = btn.querySelector(".theme-icon");
+        const text = btn.querySelector(".theme-text");
+        if (theme === "dark") {
+            if (icon) icon.textContent = "☀️";
+            if (text) text.textContent = "Light Mode";
+            if (btn.id === "topThemeToggleBtn") btn.textContent = "☀️";
+        } else {
+            if (icon) icon.textContent = "🌙";
+            if (text) text.textContent = "Dark Mode";
+            if (btn.id === "topThemeToggleBtn") btn.textContent = "🌙";
         }
-    } catch (err) {
-        console.error("Error loading edit trade data", err);
+    });
+}
+
+function initMobileNav() {
+    const menuBtn = document.getElementById("mobileMenuBtn");
+    const sidebar = document.getElementById("sidebar");
+    const overlay = document.getElementById("sidebarOverlay");
+
+    if (menuBtn && sidebar && overlay) {
+        menuBtn.addEventListener("click", () => {
+            sidebar.classList.toggle("active");
+            overlay.classList.toggle("active");
+        });
+
+        overlay.addEventListener("click", () => {
+            sidebar.classList.remove("active");
+            overlay.classList.remove("active");
+        });
     }
 }
 
-// ---------- Save Trade ----------
+function initTradeForm() {
+    const tradeForm = document.getElementById("tradeForm");
+    const stock = document.getElementById("stock");
+    const type = document.getElementById("type");
+    const entry = document.getElementById("entry");
+    const exit = document.getElementById("exit");
+    const quantity = document.getElementById("quantity");
+    const strategy = document.getElementById("strategy");
+    const emotion = document.getElementById("emotion");
+    const date = document.getElementById("date");
+    const notes = document.getElementById("notes");
+    const pnl = document.getElementById("pnl");
 
-tradeForm.addEventListener("submit", function (e) {
+    const currencySymbol = localStorage.getItem("currency") || "₹";
 
-    e.preventDefault();
-
-    console.log("Submit Working");
-
-    // Current User
-    const currentUser = JSON.parse(localStorage.getItem("currentUser")) || {};
-
-    // Trade Object
-    const trade = {
-
-        id: isEditMode ? JSON.parse(localStorage.getItem("editTradeData")).id : Date.now(),
-
-        username: currentUser.username || "Guest",
-
-        stock: stock.value.trim(),
-
-        type: type.value,
-
-        entry: Number(entry.value),
-
-        exit: Number(exit.value),
-
-        quantity: Number(quantity.value),
-
-        strategy: strategy.value.trim(),
-
-        emotion: emotion.value.trim(),
-
-        date: date.value,
-
-        notes: notes.value.trim(),
-
-        pnl: Number(pnl.innerHTML.replace(currencySymbol, ""))
-
-    };
-
-    // Get Existing Trades
-    let trades = [];
-
-    try {
-
-        trades = JSON.parse(localStorage.getItem("trades")) || [];
-
-    } catch (error) {
-
-        console.log(error);
-
-        trades = [];
-
-    }
-
-    if (isEditMode) {
-        trades[Number(editIndex)] = trade;
-        localStorage.removeItem("editTradeIndex");
-        localStorage.removeItem("editTradeData");
-        localStorage.setItem("trades", JSON.stringify(trades));
-        alert("✅ Trade Updated Successfully!");
-        window.location.href = "history.html";
-    } else {
-        trades.push(trade);
-        localStorage.setItem("trades", JSON.stringify(trades));
-        console.log("Saved Trades:", trades);
-        alert("✅ Trade Saved Successfully!");
-        tradeForm.reset();
-        pnl.innerHTML = currencySymbol + "0";
-        pnl.style.color = "#2563eb";
+    if (date && !date.value) {
         date.value = new Date().toISOString().split("T")[0];
     }
 
-});
+    function calculatePnL() {
+        if (!entry || !exit || !quantity || !pnl) return;
+
+        const entryPrice = parseFloat(entry.value);
+        const exitPrice = parseFloat(exit.value);
+        const qty = parseFloat(quantity.value);
+
+        if (isNaN(entryPrice) || isNaN(exitPrice) || isNaN(qty)) {
+            pnl.innerHTML = currencySymbol + "0.00";
+            pnl.style.color = "var(--accent-blue)";
+            return;
+        }
+
+        let result = 0;
+        if (type.value === "BUY") {
+            result = (exitPrice - entryPrice) * qty;
+        } else {
+            result = (entryPrice - exitPrice) * qty;
+        }
+
+        pnl.innerHTML = currencySymbol + result.toFixed(2);
+        pnl.style.color = result >= 0 ? "var(--profit-color)" : "var(--loss-color)";
+    }
+
+    if (entry) entry.addEventListener("input", calculatePnL);
+    if (exit) exit.addEventListener("input", calculatePnL);
+    if (quantity) quantity.addEventListener("input", calculatePnL);
+    if (type) type.addEventListener("change", calculatePnL);
+
+    // Edit Mode Support
+    const editIndex = localStorage.getItem("editTradeIndex");
+    const isEditMode = editIndex !== null && editIndex !== undefined && editIndex !== "";
+
+    if (isEditMode) {
+        try {
+            const editData = JSON.parse(localStorage.getItem("editTradeData"));
+            if (editData) {
+                if (stock) stock.value = editData.stock || "";
+                if (type) type.value = editData.type || "BUY";
+                if (entry) entry.value = editData.entry || "";
+                if (exit) exit.value = editData.exit || "";
+                if (quantity) quantity.value = editData.quantity || "";
+                if (strategy) strategy.value = editData.strategy || "";
+                if (emotion) emotion.value = editData.emotion || "";
+                if (date) date.value = editData.date || new Date().toISOString().split("T")[0];
+                if (notes) notes.value = editData.notes || "";
+
+                calculatePnL();
+
+                const pageTitle = document.querySelector(".page-title h1");
+                if (pageTitle) pageTitle.textContent = "Edit Trade Log";
+
+                const submitBtn = document.querySelector(".save-btn");
+                if (submitBtn) submitBtn.textContent = "Update Trade Log";
+            }
+        } catch (err) {
+            console.error("Error loading edit trade data", err);
+        }
+    }
+
+    if (tradeForm) {
+        tradeForm.addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            const currentUser = JSON.parse(localStorage.getItem("currentUser")) || {};
+
+            const entryVal = parseFloat(entry.value) || 0;
+            const exitVal = parseFloat(exit.value) || 0;
+            const qtyVal = parseFloat(quantity.value) || 0;
+
+            let computedPnl = 0;
+            if (type.value === "BUY") {
+                computedPnl = (exitVal - entryVal) * qtyVal;
+            } else {
+                computedPnl = (entryVal - exitVal) * qtyVal;
+            }
+
+            const trade = {
+                id: isEditMode ? (JSON.parse(localStorage.getItem("editTradeData"))?.id || Date.now()) : Date.now(),
+                username: currentUser.username || "Guest",
+                stock: stock.value.trim(),
+                type: type.value,
+                entry: entryVal,
+                exit: exitVal,
+                quantity: qtyVal,
+                strategy: strategy.value.trim(),
+                emotion: emotion.value.trim(),
+                date: date.value,
+                notes: notes.value.trim(),
+                pnl: computedPnl
+            };
+
+            let trades = JSON.parse(localStorage.getItem("trades")) || [];
+
+            if (isEditMode) {
+                trades[Number(editIndex)] = trade;
+                localStorage.removeItem("editTradeIndex");
+                localStorage.removeItem("editTradeData");
+                localStorage.setItem("trades", JSON.stringify(trades));
+                alert("✅ Trade Updated Successfully!");
+                window.location.href = "history.html";
+            } else {
+                trades.push(trade);
+                localStorage.setItem("trades", JSON.stringify(trades));
+                alert("✅ Trade Saved Successfully!");
+                tradeForm.reset();
+                if (pnl) {
+                    pnl.innerHTML = currencySymbol + "0.00";
+                    pnl.style.color = "var(--accent-blue)";
+                }
+                if (date) date.value = new Date().toISOString().split("T")[0];
+            }
+        });
+    }
+}

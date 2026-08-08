@@ -2,350 +2,235 @@
 <html lang="en">
 
 <head>
-
-<meta charset="UTF-8">
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Analytics | TradeTrack Pro</title>
-
 <script>
+    (function() {
+        const saved = localStorage.getItem("tradetrack_theme") || localStorage.getItem("theme") || 
+            (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        document.documentElement.setAttribute("data-theme", saved);
+        if (saved === "dark") document.documentElement.classList.add("dark");
+    })();
     if (localStorage.getItem("isLoggedIn") !== "true") {
         localStorage.setItem("authMessage", "Please login first to continue.");
         window.location.href = "index.html";
     }
 </script>
 
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analytics | TradeTrack Pro</title>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
-
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
 <link rel="stylesheet" href="../CSS/analytics.css">
-
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 </head>
 
 <body>
 
-<div class="container">
-
-<!-- ================= Sidebar ================= -->
-
-<aside class="sidebar">
-
-<div class="logo">
-
-<h2>📈 TradeTrack Pro</h2>
-
+<!-- Mobile Header Navigation Bar -->
+<div class="top-nav">
+    <button type="button" class="menu-btn" id="mobileMenuBtn" aria-label="Toggle Menu">☰</button>
+    <div class="brand-title">📈 TradeTrack Pro</div>
+    <button type="button" class="theme-toggle-btn" id="topThemeToggleBtn">🌙</button>
 </div>
 
-<ul class="menu">
+<!-- Mobile Sidebar Overlay Backdrop -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-<li><a href="dashboard.html">🏠 Dashboard</a></li>
+<div class="container">
 
-<li><a href="addTrade.html">➕ Add Trade</a></li>
+<!-- Sidebar Navigation -->
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-top">
+        <div class="logo">
+            <h2>📈 TradeTrack Pro</h2>
+        </div>
 
-<li><a href="history.html">📜 Trade History</a></li>
+        <ul class="menu">
+            <li><a href="dashboard.html">🏠 Dashboard</a></li>
+            <li><a href="addTrade.html">➕ Add Trade</a></li>
+            <li><a href="history.html">📜 Trade History</a></li>
+            <li class="active"><a href="analytics.html">📊 Analytics</a></li>
+            <li><a href="riskCalculator.html">💰 Risk Calculator</a></li>
+            <li><a href="settings.html">⚙️ Settings</a></li>
+        </ul>
+    </div>
 
-<li class="active"><a href="analytics.html">📊 Analytics</a></li>
-
-<li><a href="riskCalculator.html">💰 Risk Calculator</a></li>
-
-<li><a href="settings.html">⚙️ Settings</a></li>
-
-</ul>
-
+    <div class="sidebar-footer">
+        <button type="button" class="theme-toggle-btn" id="themeToggleBtn">
+            <span class="theme-icon">🌙</span>
+            <span class="theme-text">Dark Mode</span>
+        </button>
+    </div>
 </aside>
 
-<!-- ================= Main ================= -->
-
+<!-- Main Content Area -->
 <main class="main-content">
 
 <div class="page-title">
-
-<h1>📊 Trading Analytics</h1>
-
-<p>Analyze your complete trading performance.</p>
-
+    <h1>📊 Trading Analytics</h1>
+    <p>Comprehensive performance breakdown, win rates, strategy performance, and psychological insights.</p>
 </div>
 
-<!-- ================= Summary ================= -->
-
-<!-- ================= Summary ================= -->
-
+<!-- Summary Metrics Grid -->
 <section class="cards">
-
     <div class="card">
-
         <h3>Total Trades</h3>
-
         <h2 id="totalTrades">0</h2>
-
     </div>
 
     <div class="card">
-
         <h3>Winning Trades</h3>
-
         <h2 id="winningTrades">0</h2>
-
     </div>
 
     <div class="card">
-
         <h3>Losing Trades</h3>
-
         <h2 id="losingTrades">0</h2>
-
     </div>
 
     <div class="card">
-
         <h3>Win Rate</h3>
-
         <h2 id="winRate">0%</h2>
-
     </div>
 
     <div class="card">
-
         <h3>Net Profit</h3>
-
         <h2 id="netProfit">₹0</h2>
-
     </div>
 
     <div class="card">
-
         <h3>Average Profit</h3>
+        <h2 id="avgProfitCard">₹0</h2>
+    </div>
+</section>
 
-        <h2 id="avgProfit">₹0</h2>
+<!-- Interactive Charts Section -->
+<section class="chart-box">
+    <h2>📈 Weekly Performance</h2>
+    <canvas id="weeklyChart"></canvas>
+</section>
 
+<section class="chart-box">
+    <h2>📊 Monthly Performance</h2>
+    <canvas id="monthlyChart"></canvas>
+</section>
+
+<section class="chart-box">
+    <h2>🥧 Win vs Loss Distribution</h2>
+    <canvas id="pieChart"></canvas>
+</section>
+
+<!-- Asset Performance Grid -->
+<section class="analytics-grid">
+    <div class="info-card">
+        <h3>🏆 Best Stock</h3>
+        <h2 id="bestStock">-</h2>
+        <p id="bestStockProfit">₹0</p>
     </div>
 
-</section>
+    <div class="info-card">
+        <h3>📉 Worst Stock</h3>
+        <h2 id="worstStock">-</h2>
+        <p id="worstStockLoss">₹0</p>
+    </div>
 
-<!-- ================= Charts ================= -->
+    <div class="info-card">
+        <h3>📦 Most Traded Stock</h3>
+        <h2 id="mostTraded">-</h2>
+        <p id="tradeCount">0 Trades</p>
+    </div>
+
+    <div class="info-card">
+        <h3>📅 Best Trading Day</h3>
+        <h2 id="bestDay">-</h2>
+        <p id="bestDayProfit">₹0</p>
+    </div>
+</section>
 
 <section class="chart-box">
-
-<h2>📈 Weekly Performance</h2>
-
-<canvas id="weeklyChart"></canvas>
-
+    <h2>📊 Strategy Analysis Table</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Strategy</th>
+                <th>Trades Count</th>
+            </tr>
+        </thead>
+        <tbody id="strategyTable"></tbody>
+    </table>
 </section>
 
 <section class="chart-box">
-
-<h2>📊 Monthly Performance</h2>
-
-<canvas id="monthlyChart"></canvas>
-
+    <h2>😊 Emotion Analysis Table</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Emotion</th>
+                <th>Trades Count</th>
+            </tr>
+        </thead>
+        <tbody id="emotionTable"></tbody>
+    </table>
 </section>
 
-<section class="chart-box">
-
-<h2>🥧 Win vs Loss</h2>
-
-<canvas id="pieChart"></canvas>
-
-</section>
-
-<!-- ================= Performance ================= -->
-
+<!-- Strategy Grid -->
 <section class="analytics-grid">
+    <div class="info-card">
+        <h3>📊 Best Strategy</h3>
+        <h2 id="bestStrategy">-</h2>
+        <p id="strategyProfit">₹0</p>
+    </div>
 
-<div class="info-card">
+    <div class="info-card">
+        <h3>📉 Worst Strategy</h3>
+        <h2 id="worstStrategy">-</h2>
+        <p id="worstStrategyLoss">₹0</p>
+    </div>
 
-<h3>🏆 Best Stock</h3>
+    <div class="info-card">
+        <h3>😊 Top Emotion</h3>
+        <h2 id="topEmotion">-</h2>
+        <p id="emotionCount">0 Trades</p>
+    </div>
 
-<h2 id="bestStock">-</h2>
-
-<p id="bestStockProfit">₹0</p>
-
-</div>
-
-<div class="info-card">
-
-<h3>📉 Worst Stock</h3>
-
-<h2 id="worstStock">-</h2>
-
-<p id="worstStockLoss">₹0</p>
-
-</div>
-
-<div class="info-card">
-
-<h3>📦 Most Traded Stock</h3>
-
-<h2 id="mostTraded">-</h2>
-
-<p id="tradeCount">0 Trades</p>
-
-</div>
-
-<div class="info-card">
-
-<h3>📅 Best Trading Day</h3>
-
-<h2 id="bestDay">-</h2>
-
-<p id="bestDayProfit">₹0</p>
-
-</div>
-
-</section>
-<section class="chart-box">
-
-<h2>📊 Strategy Analysis</h2>
-
-<table>
-
-<thead>
-
-<tr>
-
-<th>Strategy</th>
-
-<th>Trades</th>
-
-</tr>
-
-</thead>
-
-<tbody id="strategyTable">
-
-</tbody>
-
-</table>
-
-</section>
-<section class="chart-box">
-
-<h2>😊 Emotion Analysis</h2>
-
-<table>
-
-<thead>
-
-<tr>
-
-<th>Emotion</th>
-
-<th>Trades</th>
-
-</tr>
-
-</thead>
-
-<tbody id="emotionTable">
-
-</tbody>
-
-</table>
-
+    <div class="info-card">
+        <h3>🎯 Average PnL</h3>
+        <h2 id="avgProfit">₹0</h2>
+        <p>Per Trade</p>
+    </div>
 </section>
 
-<!-- ================= Strategy ================= -->
-
+<!-- Streaks Grid -->
 <section class="analytics-grid">
+    <div class="info-card">
+        <h3>🔥 Winning Streak</h3>
+        <h2 id="winStreak">0</h2>
+    </div>
 
-<div class="info-card">
+    <div class="info-card">
+        <h3>❄️ Losing Streak</h3>
+        <h2 id="lossStreak">0</h2>
+    </div>
 
-<h3>📊 Best Strategy</h3>
+    <div class="info-card">
+        <h3>💰 Biggest Profit</h3>
+        <h2 id="bigProfit">₹0</h2>
+    </div>
 
-<h2 id="bestStrategy">-</h2>
-
-<p id="strategyProfit">₹0</p>
-
-</div>
-
-<div class="info-card">
-
-<h3>📉 Worst Strategy</h3>
-
-<h2 id="worstStrategy">-</h2>
-
-<p id="worstStrategyLoss">₹0</p>
-
-</div>
-
-<div class="info-card">
-
-<h3>😊 Most Used Emotion</h3>
-
-<h2 id="topEmotion">-</h2>
-
-<p id="emotionCount">0</p>
-
-</div>
-
-<div class="info-card">
-
-<h3>🎯 Average Profit</h3>
-
-<h2 id="avgProfit">₹0</h2>
-
-<p>Per Trade</p>
-
-</div>
-
+    <div class="info-card">
+        <h3>📉 Biggest Loss</h3>
+        <h2 id="bigLoss">₹0</h2>
+    </div>
 </section>
 
-<!-- ================= Trade Records ================= -->
-
-<section class="analytics-grid">
-
-<div class="info-card">
-
-<h3>🔥 Winning Streak</h3>
-
-<h2 id="winStreak">0</h2>
-
-</div>
-
-<div class="info-card">
-
-<h3>❄ Losing Streak</h3>
-
-<h2 id="lossStreak">0</h2>
-
-</div>
-
-<div class="info-card">
-
-<h3>💰 Biggest Profit</h3>
-
-<h2 id="bigProfit">₹0</h2>
-
-</div>
-
-<div class="info-card">
-
-<h3>📉 Biggest Loss</h3>
-
-<h2 id="bigLoss">₹0</h2>
-
-</div>
-
-</section>
-
-<!-- ================= Smart Insights ================= -->
-
+<!-- Smart AI Trading Insights -->
 <section class="insight-box">
-
-<h2>🤖 Trading Insights</h2>
-
-<ul id="insightList">
-
-<li>Waiting for data...</li>
-
-</ul>
-
+    <h2>🤖 Smart Trading Insights</h2>
+    <ul id="insightList">
+        <li>Waiting for data... Log your trades to unlock intelligent insights.</li>
+    </ul>
 </section>
 
 </main>
@@ -353,7 +238,6 @@
 </div>
 
 <script src="../JS/analytics.js"></script>
-
 </body>
 
-</html>
+</html>

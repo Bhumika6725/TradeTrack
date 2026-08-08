@@ -1,126 +1,131 @@
 // ======================================
-// TradeTrack Pro - Login
+// TradeTrack Pro - Login Logic
 // ======================================
 
-// Elements
-// ==============================
-// Apply Saved Theme
-// ==============================
-
-
-
-const loginForm = document.getElementById("loginForm");
-
-const password = document.getElementById("password");
-const togglePassword = document.getElementById("togglePassword");
-
-const errorMessage = document.getElementById("errorMessage");
-
-// ===============================
-// Show / Hide Password
-// ===============================
-
-togglePassword.addEventListener("click", () => {
-
-    if (password.type === "password") {
-
-        password.type = "text";
-        togglePassword.textContent = "🙈";
-
-    } else {
-
-        password.type = "password";
-        togglePassword.textContent = "👁️";
-
-    }
-
+document.addEventListener("DOMContentLoaded", () => {
+    initTheme();
+    initLoginForm();
 });
 
-// ===============================
-// Login
-// ===============================
+function initTheme() {
+    const saved = localStorage.getItem("tradetrack_theme") || localStorage.getItem("theme") ||
+        (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    applyTheme(saved);
 
-loginForm.addEventListener("submit", (e) => {
+    const toggleBtns = document.querySelectorAll("#themeToggleBtn, .theme-toggle-btn");
+    toggleBtns.forEach(btn => {
+        btn.addEventListener("click", () => {
+            const current = document.documentElement.getAttribute("data-theme") || "light";
+            const next = current === "dark" ? "light" : "dark";
+            applyTheme(next);
+        });
+    });
+}
 
-    e.preventDefault();
-
-    const username = document.getElementById("username").value.trim();
-
-    const pass = password.value;
-
-    const remember = document.getElementById("remember").checked;
-
-    errorMessage.innerHTML = "";
-
-    // Get All Users
-
-    const users = JSON.parse(localStorage.getItem("tradeTrackUsers")) || [];
-
-    // Find User
-
-    const user = users.find(
-
-        u => u.username === username && u.password === pass
-
-    );
-
-    if (!user) {
-
-        errorMessage.style.color = "#ef4444";
-        errorMessage.innerHTML = "Invalid Username or Password.";
-
-        return;
-
-    }
-
-    // Login Success
-
-    localStorage.setItem("isLoggedIn", "true");
-
-    localStorage.setItem("currentUser", JSON.stringify(user));
-
-    if (remember) {
-
-        localStorage.setItem("rememberUser", username);
-
+function applyTheme(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+    if (theme === "dark") {
+        document.documentElement.classList.add("dark");
+        document.body.classList.add("dark");
     } else {
-
-        localStorage.removeItem("rememberUser");
-
+        document.documentElement.classList.remove("dark");
+        document.body.classList.remove("dark");
     }
+    localStorage.setItem("tradetrack_theme", theme);
+    localStorage.setItem("theme", theme);
 
-    errorMessage.style.color = "#22c55e";
-    errorMessage.innerHTML = "Login Successful...";
+    const toggleBtns = document.querySelectorAll("#themeToggleBtn, .theme-toggle-btn");
+    toggleBtns.forEach(btn => {
+        const icon = btn.querySelector(".theme-icon");
+        const text = btn.querySelector(".theme-text");
+        if (theme === "dark") {
+            if (icon) icon.textContent = "☀️";
+            if (text) text.textContent = "Light";
+        } else {
+            if (icon) icon.textContent = "🌙";
+            if (text) text.textContent = "Dark";
+        }
+    });
+}
 
-    setTimeout(() => {
+function initLoginForm() {
+    const loginForm = document.getElementById("loginForm");
+    const passwordInput = document.getElementById("password");
+    const togglePasswordBtn = document.getElementById("togglePassword");
+    const errorMessage = document.getElementById("errorMessage");
 
-        window.location.href = "dashboard.html";
-
-    }, 1000);
-
-});
-
-// ===============================
-// Remember Username & Show Auth Message
-// ===============================
-
-window.onload = () => {
+    if (togglePasswordBtn && passwordInput) {
+        togglePasswordBtn.addEventListener("click", () => {
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                togglePasswordBtn.textContent = "🙈";
+            } else {
+                passwordInput.type = "password";
+                togglePasswordBtn.textContent = "👁️";
+            }
+        });
+    }
 
     const remembered = localStorage.getItem("rememberUser");
-
-    if (remembered) {
-
+    if (remembered && document.getElementById("username")) {
         document.getElementById("username").value = remembered;
-
-        document.getElementById("remember").checked = true;
-
+        const remCb = document.getElementById("remember");
+        if (remCb) remCb.checked = true;
     }
 
     const authMessage = localStorage.getItem("authMessage");
-    if (authMessage) {
+    if (authMessage && errorMessage) {
         errorMessage.style.color = "#ef4444";
         errorMessage.innerHTML = authMessage;
         localStorage.removeItem("authMessage");
     }
 
-};
+    if (loginForm) {
+        loginForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const usernameInput = document.getElementById("username");
+            const username = usernameInput ? usernameInput.value.trim() : "";
+            const pass = passwordInput ? passwordInput.value : "";
+            const remCb = document.getElementById("remember");
+            const remember = remCb ? remCb.checked : false;
+
+            if (errorMessage) errorMessage.innerHTML = "";
+
+            const users = JSON.parse(localStorage.getItem("tradeTrackUsers")) || [];
+            let user = users.find(
+                u => u.username.toLowerCase() === username.toLowerCase() && u.password === pass
+            );
+
+            // Demo account fallback
+            if (!user && (username.toLowerCase() === "demo" || username.toLowerCase() === "admin") && pass === "demo") {
+                user = { username: username, fullName: "Demo Trader", email: "demo@tradetrack.com" };
+            }
+
+            if (!user) {
+                if (errorMessage) {
+                    errorMessage.style.color = "#ef4444";
+                    errorMessage.innerHTML = "Invalid Username or Password. (Try demo / demo)";
+                }
+                return;
+            }
+
+            localStorage.setItem("isLoggedIn", "true");
+            localStorage.setItem("currentUser", JSON.stringify(user));
+
+            if (remember) {
+                localStorage.setItem("rememberUser", username);
+            } else {
+                localStorage.removeItem("rememberUser");
+            }
+
+            if (errorMessage) {
+                errorMessage.style.color = "#10b981";
+                errorMessage.innerHTML = "Login Successful! Redirecting...";
+            }
+
+            setTimeout(() => {
+                window.location.href = "dashboard.html";
+            }, 600);
+        });
+    }
+}
