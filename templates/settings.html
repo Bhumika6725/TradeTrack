@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block title %}TradeTrack Pro | Settings & Data Management{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-6">
+  
+  <div class="border-b border-gray-200 dark:border-gray-800 pb-4">
+    <h1 class="text-2xl sm:text-3xl font-bold">⚙️ Settings & Data Management</h1>
+    <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1">Manage your account profile, trading preferences, backups, and data exports.</p>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    
+    <!-- Left Column: User Profile Card -->
+    <div class="card p-6 flex flex-col justify-between">
+      <div>
+        <div class="flex items-center gap-4 mb-4">
+          <div class="w-14 h-14 rounded-full bg-blue-600 text-white font-bold text-2xl flex items-center justify-center shadow-md">
+            👤
+          </div>
+          <div>
+            <h3 id="profileName" class="font-bold text-lg text-gray-900 dark:text-white">Trader</h3>
+            <p id="profileUsername" class="text-xs text-blue-600 dark:text-blue-400 font-semibold">@trader</p>
+            <p id="profileEmail" class="text-xs text-gray-400 mt-0.5">trader@example.com</p>
+          </div>
+        </div>
+        <p class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed border-t border-gray-100 dark:border-gray-800 pt-3">
+          Your trading journal data is safely stored in local browser storage and synchronized with your Flask server.
+        </p>
+      </div>
+
+      <div class="mt-6 pt-4 border-t border-gray-100 dark:border-gray-800">
+        <button type="button" id="logoutBtn" class="btn btn-danger w-full">
+          🚪 Logout Account
+        </button>
+      </div>
+    </div>
+
+    <!-- Right Column: Settings Forms (Spans 2 columns) -->
+    <div class="lg:col-span-2 space-y-6">
+      
+      <!-- Profile & Trading Preferences Card -->
+      <div class="card p-6 space-y-4">
+        <h3 class="font-bold text-lg text-gray-900 dark:text-white flex items-center gap-2 border-b border-gray-100 dark:border-gray-800 pb-3">
+          <span>👤</span> Profile & Trading Preferences
+        </h3>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="form-group">
+            <label for="name" class="form-label">Full Name</label>
+            <input type="text" id="name" class="form-input" placeholder="Your Name">
+          </div>
+
+          <div class="form-group">
+            <label for="email" class="form-label">Email Address</label>
+            <input type="email" id="email" class="form-input" placeholder="name@example.com">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div class="form-group">
+            <label for="currency" class="form-label">Currency Symbol</label>
+            <select id="currency" class="form-select">
+              <option value="₹">₹ (INR)</option>
+              <option value="$">$ (USD)</option>
+              <option value="€">€ (EUR)</option>
+              <option value="£">£ (GBP)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="risk" class="form-label">Default Risk %</label>
+            <input type="text" id="risk" class="form-input" placeholder="e.g. 2%">
+          </div>
+
+          <div class="form-group">
+            <label for="capital" class="form-label">Default Capital (₹)</label>
+            <input type="number" id="capital" class="form-input" placeholder="e.g. 100000">
+          </div>
+        </div>
+
+        <div class="flex justify-end">
+          <button type="button" id="saveSettingsBtn" class="btn btn-primary">
+            Save Preferences
+          </button>
+        </div>
+      </div>
+
+      <!-- Change Password Card -->
+      <div class="card p-6 space-y-4">
+        <h3 class="font-bold text-lg text-gray-900 dark:text-white flex items-center gap-2 border-b border-gray-100 dark:border-gray-800 pb-3">
+          <span>🔒</span> Security & Password
+        </h3>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div class="form-group">
+            <label for="currentPassword" class="form-label">Current Password</label>
+            <input type="password" id="currentPassword" class="form-input" placeholder="••••••••">
+          </div>
+
+          <div class="form-group">
+            <label for="newPassword" class="form-label">New Password</label>
+            <input type="password" id="newPassword" class="form-input" placeholder="New Password">
+          </div>
+
+          <div class="form-group">
+            <label for="confirmPassword" class="form-label">Confirm Password</label>
+            <input type="password" id="confirmPassword" class="form-input" placeholder="Confirm Password">
+          </div>
+        </div>
+
+        <div class="flex justify-end">
+          <button type="button" id="changePasswordBtn" class="btn btn-secondary">
+            Update Password
+          </button>
+        </div>
+      </div>
+
+      <!-- Data Export, Backup & Restore Card -->
+      <div class="card p-6 space-y-4">
+        <h3 class="font-bold text-lg text-gray-900 dark:text-white flex items-center gap-2 border-b border-gray-100 dark:border-gray-800 pb-3">
+          <span>📦</span> Data Backup & Export
+        </h3>
+
+        <p class="text-xs text-gray-500 dark:text-gray-400">
+          Export your journal logs as CSV spreadsheets, create full JSON backups, or restore trades from a backup file.
+        </p>
+
+        <div class="flex flex-wrap gap-3 pt-2">
+          <button type="button" id="exportBtn" class="btn btn-primary">
+            📊 Export CSV
+          </button>
+
+          <button type="button" id="backupBtn" class="btn btn-secondary">
+            💾 Backup JSON
+          </button>
+
+          <button type="button" id="importBtn" class="btn btn-secondary">
+            📥 Import JSON Backup
+          </button>
+          <input type="file" id="importFile" accept=".json" class="hidden">
+
+          <button type="button" id="clearBtn" class="btn btn-danger ml-auto">
+            🗑️ Clear All Trades
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/settings.js') }}"></script>
+{% endblock %}

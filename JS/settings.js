@@ -69,13 +69,8 @@ window.onload = () => {
     capital.value =
     localStorage.getItem("capital") || "";
 
-    darkMode.checked =
-    localStorage.getItem("darkMode") === "true";
-
-    notification.checked =
-    localStorage.getItem("notification") === "true";
-
-    if(darkMode.checked){
+    const isDarkMode = localStorage.getItem("darkMode") === "true";
+    if(isDarkMode){
 
         document.body.classList.add("dark");
 
@@ -130,11 +125,6 @@ saveBtn.addEventListener("click",()=>{
         capital.value
     );
 
-    localStorage.setItem(
-        "notification",
-        notification.checked
-    );
-
     alert("Settings Saved Successfully.");
 
 });
@@ -158,12 +148,13 @@ exportBtn.addEventListener("click",()=>{
     }
 
     let csv =
-"Stock,Type,Entry,Exit,Qty,PnL,Strategy,Emotion,Date\n";
+"Stock,Type,Entry,Exit,Qty,PnL,Strategy,Emotion,Date,Notes\n";
 
     trades.forEach(t=>{
 
+        const noteEscaped = t.notes ? `"${t.notes.replace(/"/g, '""')}"` : '""';
         csv +=
-`${t.stock},${t.type},${t.entry},${t.exit},${t.quantity},${t.pnl},${t.strategy},${t.emotion},${t.date}\n`;
+`${t.stock},${t.type},${t.entry},${t.exit},${t.quantity},${t.pnl},${t.strategy},${t.emotion},${t.date},${noteEscaped}\n`;
 
     });
 
@@ -329,6 +320,10 @@ logoutBtn.addEventListener("click",()=>{
         localStorage.removeItem("isLoggedIn");
 
         localStorage.removeItem("currentUser");
+
+        localStorage.removeItem("editTradeIndex");
+
+        localStorage.removeItem("editTradeData");
 
         window.location.href="index.html";
 

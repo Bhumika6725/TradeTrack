@@ -234,6 +234,190 @@ tbody tr:hover{
 
 }
 
+.view-btn{
+    border:none;
+    background:#4b5563;
+    color:white;
+    padding:8px 14px;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:13px;
+    font-weight:500;
+}
+
+.view-btn:hover{
+    background:#374151;
+}
+
+/* ================= Modal Popup (Dark Theme) ================= */
+
+.modal-overlay{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100vw;
+    height:100vh;
+    background:rgba(0,0,0,0.7);
+    backdrop-filter:blur(5px);
+    z-index:1000;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    opacity:1;
+    transition:.25s ease;
+}
+
+.modal-overlay.hidden{
+    display:none !important;
+    opacity:0;
+    pointer-events:none;
+}
+
+.modal-card{
+    background:#111827;
+    border:1px solid #1f2937;
+    border-radius:16px;
+    width:100%;
+    max-width:600px;
+    padding:24px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.5);
+    max-height:90vh;
+    overflow-y:auto;
+    color:#f9fafb;
+    animation:modalPop .25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modalPop {
+    from { opacity:0; transform:scale(0.95) translateY(10px); }
+    to { opacity:1; transform:scale(1) translateY(0); }
+}
+
+.modal-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding-bottom:16px;
+    border-bottom:1px solid #1f2937;
+}
+
+.modal-title-group{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.modal-title{
+    font-size:20px;
+    font-weight:700;
+    color:#ffffff;
+}
+
+.badge{
+    display:inline-block;
+    padding:4px 10px;
+    border-radius:12px;
+    font-size:12px;
+    font-weight:600;
+    background:#2563eb;
+    color:white;
+}
+
+.modal-close-btn{
+    background:transparent;
+    border:none;
+    font-size:24px;
+    color:#9ca3af;
+    cursor:pointer;
+    padding:4px 10px;
+    border-radius:6px;
+}
+
+.modal-close-btn:hover{
+    background:#1f2937;
+    color:#ffffff;
+}
+
+.stats-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(120px, 1fr));
+    gap:12px;
+    background:rgba(31, 41, 55, 0.6);
+    padding:14px;
+    border-radius:12px;
+    border:1px solid #1f2937;
+    margin-top:16px;
+}
+
+.stat-label{
+    font-size:12px;
+    color:#9ca3af;
+}
+
+.stat-val{
+    font-size:15px;
+    font-weight:600;
+    color:#ffffff;
+}
+
+.notes-container{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    margin-top:16px;
+}
+
+.note-card{
+    background:rgba(31, 41, 55, 0.8);
+    border:1px solid #374151;
+    border-radius:10px;
+    padding:14px;
+}
+
+.note-heading{
+    font-size:12px;
+    font-weight:700;
+    color:#9ca3af;
+    text-transform:uppercase;
+    letter-spacing:0.05em;
+    margin-bottom:6px;
+}
+
+.note-content{
+    font-size:14px;
+    color:#e5e7eb;
+    line-height:1.6;
+    white-space:pre-wrap;
+}
+
+.note-content.empty{
+    color:#6b7280;
+    font-style:italic;
+}
+
+.modal-footer{
+    display:flex;
+    justify-content:flex-end;
+    gap:8px;
+    border-top:1px solid #1f2937;
+    padding-top:16px;
+    margin-top:16px;
+}
+
+.close-btn{
+    border:none;
+    background:#2563eb;
+    color:white;
+    padding:10px 20px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:600;
+}
+
+.close-btn:hover{
+    background:#1d4ed8;
+}
+
 /* ================= Responsive ================= */
 
 @media(max-width:900px){
@@ -257,3 +441,36 @@ tbody tr:hover{
 }
 
 }
+
+/* Custom styles for notes toggle in history table */
+.note-text-container {
+    display: inline-block;
+    max-width: 250px;
+    word-break: break-word;
+    text-align: left;
+}
+
+.view-more-btn {
+    background: none;
+    border: none;
+    color: #2563eb;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 0;
+    margin-left: 5px;
+    text-decoration: underline;
+}
+
+.view-more-btn:hover {
+    color: #1d4ed8;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.no-notes {
+    color: #9ca3af;
+    font-style: italic;
+}

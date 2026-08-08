@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+
+{% block title %}TradeTrack Pro | Trade History Log{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+  
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-200 dark:border-gray-800 pb-4">
+    <div>
+      <h1 class="text-2xl sm:text-3xl font-bold">📜 Trade History Log</h1>
+      <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1">Review, filter, edit, and analyze all your past logged trades.</p>
+    </div>
+    <a href="{{ url_for('add_trade') }}" class="btn btn-primary w-fit">
+      ➕ Add New Trade
+    </a>
+  </div>
+
+  <!-- Search & Filter Controls Card -->
+  <div class="card p-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      
+      <!-- Search Input -->
+      <div class="form-group mb-0">
+        <label for="searchTrade" class="form-label">Search Symbol / Strategy</label>
+        <input type="text" id="searchTrade" class="form-input" placeholder="🔍 Search stock, strategy...">
+      </div>
+
+      <!-- Type Filter -->
+      <div class="form-group mb-0">
+        <label for="filterType" class="form-label">Trade Type</label>
+        <select id="filterType" class="form-select">
+          <option value="ALL">All Types (BUY & SELL)</option>
+          <option value="BUY">BUY Only</option>
+          <option value="SELL">SELL Only</option>
+        </select>
+      </div>
+
+      <!-- PnL Filter -->
+      <div class="form-group mb-0">
+        <label for="filterPnL" class="form-label">Outcome</label>
+        <select id="filterPnL" class="form-select">
+          <option value="ALL">All Outcomes</option>
+          <option value="PROFIT">Profitable Trades Only</option>
+          <option value="LOSS">Losing Trades Only</option>
+        </select>
+      </div>
+
+      <!-- Sort -->
+      <div class="form-group mb-0">
+        <label for="sortTrades" class="form-label">Sort By</label>
+        <select id="sortTrades" class="form-select">
+          <option value="date-desc">Date (Newest First)</option>
+          <option value="date-asc">Date (Oldest First)</option>
+          <option value="pnl-desc">Profit (High to Low)</option>
+          <option value="pnl-asc">Profit (Low to High)</option>
+        </select>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Responsive Trade Table -->
+  <div class="card p-0 overflow-hidden">
+    <div class="table-container border-0">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Stock</th>
+            <th>Type</th>
+            <th>Entry</th>
+            <th>Exit</th>
+            <th>Qty</th>
+            <th>PnL (₹)</th>
+            <th>Strategy</th>
+            <th>Emotion</th>
+            <th>Date</th>
+            <th>Details</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="tradeTableBody">
+          <!-- Populated by history.js -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Trade Details & Notes Viewer Modal -->
+  <div id="tradeModal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="flex items-center gap-3">
+          <span id="modalStock" class="text-xl font-bold">RELIANCE</span>
+          <span id="modalTypeBadge" class="badge badge-profit">BUY</span>
+        </div>
+        <button type="button" id="closeModalBtn" class="modal-close-btn">&times;</button>
+      </div>
+
+      <div class="modal-body space-y-4 mt-4">
+        <!-- Trade Stats Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-gray-50 dark:bg-slate-800/60 p-3 rounded-lg border border-gray-200 dark:border-gray-700">
+          <div>
+            <span class="text-xs text-gray-500 dark:text-gray-400 font-medium">Entry Price</span>
+            <div id="modalEntry" class="text-sm font-semibold">₹0.00</div>
+          </div>
+          <div>
+            <span class="text-xs text-gray-500 dark:text-gray-400 font-medium">Exit Price</span>
+            <div id="modalExit" class="text-sm font-semibold">₹0.00</div>
+          </div>
+          <div>
+            <span class="text-xs text-gray-500 dark:text-gray-400 font-medium">Quantity</span>
+            <div id="modalQty" class="text-sm font-semibold">0</div>
+          </div>
+          <div>
+            <span class="text-xs text-gray-500 dark:text-gray-400 font-medium">Realized PnL</span>
+            <div id="modalPnL" class="text-sm font-bold text-profit">₹0.00</div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div class="card p-3">
+            <span class="text-xs text-gray-500 dark:text-gray-400 font-medium">Strategy</span>
+            <div id="modalStrategy" class="text-sm font-semibold mt-0.5">Breakout</div>
+          </div>
+          <div class="card p-3">
+            <span class="text-xs text-gray-500 dark:text-gray-400 font-medium">Emotional State</span>
+            <div id="modalEmotion" class="text-sm font-semibold mt-0.5">Calm</div>
+          </div>
+          <div class="card p-3">
+            <span class="text-xs text-gray-500 dark:text-gray-400 font-medium">Trade Date</span>
+            <div id="modalDate" class="text-sm font-semibold mt-0.5">2026-07-28</div>
+          </div>
+        </div>
+
+        <!-- Notes, Entry Reason & Lessons Learned Section -->
+        <div class="space-y-3">
+          <!-- Why Did You Enter This Trade -->
+          <div class="card p-4 bg-slate-800/60 border-gray-700">
+            <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 flex items-center gap-1.5">
+              <span>🎯</span> Why Did You Enter This Trade?
+            </h4>
+            <p id="modalReason" class="text-sm text-gray-200 leading-relaxed font-medium">
+              -
+            </p>
+          </div>
+
+          <!-- Trade Notes -->
+          <div class="card p-4 bg-slate-800/60 border-gray-700">
+            <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 flex items-center gap-1.5">
+              <span>📝</span> Trade Notes
+            </h4>
+            <p id="modalNotes" class="text-sm text-gray-200 leading-relaxed font-medium whitespace-pre-wrap">
+              No notes added
+            </p>
+          </div>
+
+          <!-- Lessons Learned -->
+          <div class="card p-4 bg-slate-800/60 border-gray-700">
+            <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 flex items-center gap-1.5">
+              <span>💡</span> Lessons Learned
+            </h4>
+            <p id="modalLessons" class="text-sm text-gray-200 leading-relaxed font-medium whitespace-pre-wrap">
+              No notes added
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer flex justify-end gap-2 border-t border-gray-200 dark:border-gray-800 pt-4 mt-4">
+        <button type="button" id="modalEditBtn" class="btn btn-secondary">✏️ Edit Trade</button>
+        <button type="button" id="modalCloseFooterBtn" class="btn btn-primary">Close</button>
+      </div>
+    </div>
+  </div>
+
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/history.js') }}"></script>
+{% endblock %}
+

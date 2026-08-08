@@ -17,7 +17,9 @@ let trades = JSON.parse(localStorage.getItem("trades")) || [];
 
 // ================= Welcome =================
 
-const userName = localStorage.getItem("userName") || "Trader";
+const currentUser = JSON.parse(localStorage.getItem("currentUser")) || {};
+const userName = currentUser.fullName || "Trader";
+const currencySymbol = localStorage.getItem("currency") || "₹";
 
 document.getElementById("welcomeText").innerHTML =
 `Welcome, ${userName} 👋`;
@@ -156,10 +158,10 @@ for(let strategy in strategyProfit){
 document.getElementById("totalTrades").innerHTML = totalTrades;
 
 document.getElementById("netProfit").innerHTML =
-"₹"+totalProfit.toFixed(2);
+currencySymbol+totalProfit.toFixed(2);
 
 document.getElementById("todayProfit").innerHTML =
-"₹"+todayProfit.toFixed(2);
+currencySymbol+todayProfit.toFixed(2);
 
 let winRate = totalTrades==0 ? 0 :
 ((wins/totalTrades)*100).toFixed(1);
@@ -177,10 +179,10 @@ document.getElementById("bestStrategy").innerHTML =
 bestStrategy;
 
 document.getElementById("bigProfit").innerHTML =
-"₹"+biggestProfit.toFixed(2);
+currencySymbol+biggestProfit.toFixed(2);
 
 document.getElementById("bigLoss").innerHTML =
-"₹"+biggestLoss.toFixed(2);
+currencySymbol+biggestLoss.toFixed(2);
 
 
 // ================= Recent Trades =================
@@ -205,7 +207,7 @@ table.innerHTML +=`
 
 <td style="color:${trade.pnl>=0?"green":"red"}">
 
-₹${trade.pnl}
+${currencySymbol}${trade.pnl.toFixed(2)}
 
 </td>
 

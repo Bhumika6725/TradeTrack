@@ -3,109 +3,179 @@
 
 <head>
 
-<meta charset="UTF-8">
+  <meta charset="UTF-8">
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Trade History | TradeTrack Pro</title>
+  <title>Trade History | TradeTrack Pro</title>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
+  <script>
+      if (localStorage.getItem("isLoggedIn") !== "true") {
+          localStorage.setItem("authMessage", "Please login first to continue.");
+          window.location.href = "index.html";
+      }
+  </script>
 
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-<link rel="stylesheet" href="../CSS/history.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../CSS/history.css">
 
 </head>
 
 <body>
 
-<div class="container">
+  <div class="container">
 
-<!-- Sidebar -->
+    <!-- Sidebar -->
 
-<aside class="sidebar">
+    <aside class="sidebar">
 
-<div class="logo">
+      <div class="logo">
 
-<h2>📈 TradeTrack Pro</h2>
+        <h2>📈 TradeTrack Pro</h2>
 
-</div>
+      </div>
 
-<ul class="menu">
+      <ul class="menu">
 
-<li><a href="dashboard.html">🏠 Dashboard</a></li>
+        <li><a href="dashboard.html">🏠 Dashboard</a></li>
 
-<li><a href="addTrade.html">➕ Add Trade</a></li>
+        <li><a href="addTrade.html">➕ Add Trade</a></li>
 
-<li class="active"><a href="history.html">📜 Trade History</a></li>
+        <li class="active"><a href="history.html">📜 Trade History</a></li>
 
-<li><a href="analytics.html">📊 Analytics</a></li>
+        <li><a href="analytics.html">📊 Analytics</a></li>
 
-<li><a href="riskCalculator.html">💰 Risk Calculator</a></li>
+        <li><a href="riskCalculator.html">💰 Risk Calculator</a></li>
 
-<li><a href="settings.html">⚙️ Settings</a></li>
+        <li><a href="settings.html">⚙️ Settings</a></li>
 
-</ul>
+      </ul>
 
-</aside>
+    </aside>
 
-<!-- Main -->
+    <!-- Main -->
 
-<main class="main-content">
+    <main class="main-content">
 
-<h1>📜 Trade History</h1>
+      <h1>📜 Trade History</h1>
 
-<p>View and manage all your saved trades.</p>
+      <p>View and manage all your saved trades.</p>
 
-<br>
+      <br>
 
-<div class="table-container">
+      <div class="table-container">
 
-<table>
+        <table>
 
-<thead>
+          <thead>
 
-<tr>
+            <tr>
 
-<th>Stock</th>
+              <th>Stock</th>
 
-<th>Type</th>
+              <th>Type</th>
 
-<th>Entry</th>
+              <th>Entry</th>
 
-<th>Exit</th>
+              <th>Exit</th>
 
-<th>Qty</th>
+              <th>Qty</th>
 
-<th>P/L</th>
+              <th>P/L</th>
 
-<th>Strategy</th>
+              <th>Strategy</th>
 
-<th>Emotion</th>
+              <th>Emotion</th>
 
-<th>Date</th>
+              <th>Date</th>
 
-<th>Action</th>
+              <th>Details</th>
 
-</tr>
+              <th>Action</th>
 
-</thead>
+            </tr>
 
-<tbody id="tradeTable">
+          </thead>
 
-</tbody>
+          <tbody id="tradeTable">
 
-</table>
+          </tbody>
 
-</div>
+        </table>
 
-</main>
+      </div>
 
-</div>
+    </main>
 
-<script src="../JS/history.js"></script>
+  </div>
+
+  <!-- Trade Details & Notes Viewer Modal Popup -->
+  <div id="notesModal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <span id="modalStock" class="modal-title">RELIANCE</span>
+          <span id="modalTypeBadge" class="badge">BUY</span>
+        </div>
+        <button type="button" class="modal-close-btn" onclick="closeNotesModal()">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Key Statistics Grid -->
+        <div class="stats-grid">
+          <div>
+            <span class="stat-label">Entry Price</span>
+            <div id="modalEntry" class="stat-val">₹0.00</div>
+          </div>
+          <div>
+            <span class="stat-label">Exit Price</span>
+            <div id="modalExit" class="stat-val">₹0.00</div>
+          </div>
+          <div>
+            <span class="stat-label">Quantity</span>
+            <div id="modalQty" class="stat-val">0</div>
+          </div>
+          <div>
+            <span class="stat-label">Realized PnL</span>
+            <div id="modalPnL" class="stat-val profit">₹0.00</div>
+          </div>
+        </div>
+
+        <!-- Notes, Entry Reason & Lessons Section -->
+        <div class="notes-container">
+          <!-- Why Did You Enter This Trade -->
+          <div class="note-card">
+            <h4 class="note-heading">🎯 Why Did You Enter This Trade?</h4>
+            <p id="modalReason" class="note-content font-medium">-</p>
+          </div>
+
+          <!-- Trade Notes -->
+          <div class="note-card">
+            <h4 class="note-heading">📝 Trade Notes</h4>
+            <p id="modalNotes" class="note-content">No notes added</p>
+          </div>
+
+          <!-- Lessons Learned -->
+          <div class="note-card">
+            <h4 class="note-heading">💡 Lessons Learned</h4>
+            <p id="modalLessons" class="note-content">No notes added</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="modal-footer">
+        <button type="button" class="close-btn" onclick="closeNotesModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../JS/history.js"></script>
 
 </body>
 

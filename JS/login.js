@@ -101,7 +101,7 @@ loginForm.addEventListener("submit", (e) => {
 });
 
 // ===============================
-// Remember Username
+// Remember Username & Show Auth Message
 // ===============================
 
 window.onload = () => {
@@ -114,6 +114,13 @@ window.onload = () => {
 
         document.getElementById("remember").checked = true;
 
+    }
+
+    const authMessage = localStorage.getItem("authMessage");
+    if (authMessage) {
+        errorMessage.style.color = "#ef4444";
+        errorMessage.innerHTML = authMessage;
+        localStorage.removeItem("authMessage");
     }
 
 };

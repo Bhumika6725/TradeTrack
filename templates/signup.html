@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}TradeTrack Pro | Sign Up{% endblock %}
+
+{% block content %}
+<div class="min-h-[80vh] flex items-center justify-center py-6">
+  <div class="w-full max-w-md card p-6 md:p-8 shadow-xl">
+    <div class="text-center mb-6">
+      <div class="inline-flex p-3 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 text-2xl mb-2">
+        📈
+      </div>
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Create Account</h2>
+      <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Start tracking your trades professionally</p>
+    </div>
+
+    <form id="signupForm" class="space-y-4">
+      <div class="form-group">
+        <label for="fullName" class="form-label">Full Name</label>
+        <input type="text" id="fullName" class="form-input" placeholder="e.g. John Doe" required>
+      </div>
+
+      <div class="form-group">
+        <label for="username" class="form-label">Username</label>
+        <input type="text" id="username" class="form-input" placeholder="Choose username" required>
+      </div>
+
+      <div class="form-group">
+        <label for="email" class="form-label">Email Address</label>
+        <input type="email" id="email" class="form-input" placeholder="name@example.com" required>
+      </div>
+
+      <div class="form-group">
+        <label for="password" class="form-label">Password</label>
+        <input type="password" id="password" class="form-input" placeholder="Create password" required>
+      </div>
+
+      <div class="form-group">
+        <label for="confirmPassword" class="form-label">Confirm Password</label>
+        <input type="password" id="confirmPassword" class="form-input" placeholder="Confirm password" required>
+      </div>
+
+      <button type="submit" id="signupSubmitBtn" class="btn btn-primary w-full py-3 mt-2">
+        Create Trading Journal
+      </button>
+
+      <div class="text-center text-xs text-gray-500 dark:text-gray-400 mt-4 pt-4 border-t border-gray-100 dark:border-gray-800">
+        Already have an account? 
+        <a href="{{ url_for('index') }}" class="text-blue-600 dark:text-blue-400 font-semibold hover:underline">Login Here</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("signupForm");
+  if (form) {
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const fullName = document.getElementById("fullName").value.trim();
+      const username = document.getElementById("username").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const confirmPassword = document.getElementById("confirmPassword").value.trim();
+
+      if (password !== confirmPassword) {
+        showToast("Passwords do not match!", "error");
+        return;
+      }
+
+      const submitBtn = document.getElementById("signupSubmitBtn");
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<div class="spinner"></div> Creating Account...`;
+
+      try {
+        const res = await fetch("/api/auth/signup", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ fullName, username, email, password })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          localStorage.setItem("isLoggedIn", "true");
+          localStorage.setItem("currentUser", JSON.stringify(data.user));
+          showToast("Account created successfully! 🎉", "success");
+          setTimeout(() => window.location.href = "/dashboard", 800);
+        } else {
+          showToast(data.message || "Failed to create account", "error");
+          submitBtn.disabled = false;
+          submitBtn.textContent = "Create Trading Journal";
+        }
+      } catch (err) {
+        // Fallback static register
+        const newUser = { fullName, username, email, password };
+        localStorage.setItem("isLoggedIn", "true");
+        localStorage.setItem("currentUser", JSON.stringify(newUser));
+        showToast("Account created successfully! 🎉", "success");
+        setTimeout(() => window.location.href = "/dashboard", 800);
+      }
+    });
+  }
+});
+</script>
+{% endblock %}

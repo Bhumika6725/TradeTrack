@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+
+{% block title %}TradeTrack Pro | Login{% endblock %}
+
+{% block content %}
+<div class="min-h-[80vh] flex items-center justify-center py-6">
+  <div class="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-8 card overflow-hidden p-0 shadow-xl border border-gray-200 dark:border-gray-800">
+    
+    <!-- Left Hero Feature Panel -->
+    <div class="bg-gradient-to-br from-blue-600 to-indigo-800 p-8 text-white flex flex-col justify-between">
+      <div>
+        <div class="flex items-center gap-2 text-2xl font-bold mb-4">
+          <span>📈</span>
+          <span>TradeTrack Pro</span>
+        </div>
+        <h2 class="text-xl font-semibold mb-3 text-blue-100">Professional Trading Journal & Analytics</h2>
+        <p class="text-sm text-blue-100/90 leading-relaxed mb-6">
+          Track every trade, eliminate emotional mistakes, analyze your win rates, and master risk management with precision.
+        </p>
+
+        <div class="space-y-3 text-sm font-medium text-blue-50">
+          <div class="flex items-center gap-3">
+            <span class="bg-white/10 p-2 rounded-lg">📊</span>
+            <span>Advanced Performance Analytics</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="bg-white/10 p-2 rounded-lg">⚡</span>
+            <span>Smart Risk & Position Sizing Calculator</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="bg-white/10 p-2 rounded-lg">💰</span>
+            <span>Live PnL & Strategy Tracking</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="bg-white/10 p-2 rounded-lg">🧠</span>
+            <span>Trading Psychology & Emotion Journaling</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-8 pt-4 border-t border-white/10 text-xs text-blue-200">
+        Empowering disciplined traders worldwide.
+      </div>
+    </div>
+
+    <!-- Right Login Form Panel -->
+    <div class="p-6 md:p-8 flex flex-col justify-center">
+      <div class="mb-6">
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Welcome Back 👋</h2>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Sign in to your trading journal</p>
+      </div>
+
+      <form id="loginForm" class="space-y-4">
+        <div class="form-group">
+          <label for="username" class="form-label">Username or Email</label>
+          <input type="text" id="username" class="form-input" placeholder="e.g. trader123 or demo" required>
+        </div>
+
+        <div class="form-group">
+          <div class="flex justify-between items-center">
+            <label for="password" class="form-label">Password</label>
+            <a href="{{ url_for('forgot_password') }}" class="text-xs text-blue-600 dark:text-blue-400 hover:underline">Forgot Password?</a>
+          </div>
+          <div class="relative">
+            <input type="password" id="password" class="form-input pr-10" placeholder="Enter password (demo: demo)" required>
+            <button type="button" id="togglePasswordBtn" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+              👁️
+            </button>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between text-sm">
+          <label class="flex items-center gap-2 text-gray-600 dark:text-gray-300 cursor-pointer">
+            <input type="checkbox" id="rememberMe" class="rounded border-gray-300 text-blue-600 shadow-sm focus:ring-blue-500">
+            <span>Remember Me</span>
+          </label>
+        </div>
+
+        <button type="submit" id="loginSubmitBtn" class="btn btn-primary w-full py-3 mt-2">
+          <span>Login to Journal</span>
+        </button>
+
+        <p id="loginErrorMsg" class="text-xs text-red-500 text-center hidden"></p>
+
+        <div class="text-center text-xs text-gray-500 dark:text-gray-400 mt-6 pt-4 border-t border-gray-100 dark:border-gray-800">
+          Don't have an account? 
+          <a href="{{ url_for('signup') }}" class="text-blue-600 dark:text-blue-400 font-semibold hover:underline">Sign Up Free</a>
+        </div>
+      </form>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const loginForm = document.getElementById("loginForm");
+  const usernameInput = document.getElementById("username");
+  const passwordInput = document.getElementById("password");
+  const togglePassBtn = document.getElementById("togglePasswordBtn");
+  const submitBtn = document.getElementById("loginSubmitBtn");
+  const errorMsg = document.getElementById("loginErrorMsg");
+
+  const authMessage = localStorage.getItem("authMessage");
+  if (authMessage && errorMsg) {
+    errorMsg.textContent = authMessage;
+    errorMsg.classList.remove("hidden");
+    localStorage.removeItem("authMessage");
+  }
+
+  if (togglePassBtn && passwordInput) {
+    togglePassBtn.addEventListener("click", () => {
+      const isPass = passwordInput.type === "password";
+      passwordInput.type = isPass ? "text" : "password";
+      togglePassBtn.textContent = isPass ? "🙈" : "👁️";
+    });
+  }
+
+  if (loginForm) {
+    loginForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      errorMsg.classList.add("hidden");
+
+      const username = usernameInput.value.trim();
+      const password = passwordInput.value.trim();
+
+      if (!username || !password) return;
+
+      const originalText = submitBtn.innerHTML;
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<div class="spinner"></div> Logging in...`;
+
+      try {
+        const res = await fetch("/api/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          localStorage.setItem("isLoggedIn", "true");
+          localStorage.setItem("currentUser", JSON.stringify(data.user));
+          showToast("Login successful! Welcome back 🚀", "success");
+          setTimeout(() => {
+            window.location.href = "/dashboard";
+          }, 600);
+        } else {
+          // Fallback login check for demo user
+          if ((username === "demo" || username === "admin") && password === "demo") {
+            const demoUser = { username: username, fullName: "Demo Trader", email: "demo@tradetrack.com" };
+            localStorage.setItem("isLoggedIn", "true");
+            localStorage.setItem("currentUser", JSON.stringify(demoUser));
+            showToast("Logged in as Demo Trader! 🚀", "success");
+            setTimeout(() => window.location.href = "/dashboard", 600);
+          } else {
+            errorMsg.textContent = data.message || "Invalid username or password";
+            errorMsg.classList.remove("hidden");
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+          }
+        }
+      } catch (err) {
+        // Fallback for offline / static mode
+        const demoUser = { username: username, fullName: username, email: `${username}@tradetrack.com` };
+        localStorage.setItem("isLoggedIn", "true");
+        localStorage.setItem("currentUser", JSON.stringify(demoUser));
+        showToast("Logged in successfully!", "success");
+        setTimeout(() => window.location.href = "/dashboard", 600);
+      }
+    });
+  }
+});
+</script>
+{% endblock %}

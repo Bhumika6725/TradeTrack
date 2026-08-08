@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block title %}TradeTrack Pro | Dashboard{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+  
+  <!-- Welcome Banner -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-gray-200 dark:border-gray-800 pb-4">
+    <div>
+      <h1 id="welcomeText" class="text-2xl sm:text-3xl font-bold">Welcome back 👋</h1>
+      <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1">Here is your trading performance summary.</p>
+    </div>
+    <div class="text-xs sm:text-sm font-medium bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 px-3 py-1.5 rounded-lg w-fit">
+      📅 <span id="todayDate">Today</span>
+    </div>
+  </div>
+
+  <!-- Primary Metric Cards Grid -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    
+    <!-- Total Trades -->
+    <div class="card card-hover">
+      <div class="card-header">
+        <span class="card-title">Total Trades</span>
+        <span class="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400">📊</span>
+      </div>
+      <div id="totalTrades" class="card-value">0</div>
+      <div class="text-xs text-gray-400 mt-1">Logged journal entries</div>
+    </div>
+
+    <!-- Net PnL -->
+    <div class="card card-hover">
+      <div class="card-header">
+        <span class="card-title">Net PnL</span>
+        <span class="p-2 rounded-lg bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400">💰</span>
+      </div>
+      <div id="netProfit" class="card-value">₹0.00</div>
+      <div class="text-xs text-gray-400 mt-1">Cumulative profit & loss</div>
+    </div>
+
+    <!-- Today's PnL -->
+    <div class="card card-hover">
+      <div class="card-header">
+        <span class="card-title">Today's PnL</span>
+        <span class="p-2 rounded-lg bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400">⚡</span>
+      </div>
+      <div id="todayProfit" class="card-value">₹0.00</div>
+      <div class="text-xs text-gray-400 mt-1">Realized today</div>
+    </div>
+
+    <!-- Win Rate -->
+    <div class="card card-hover">
+      <div class="card-header">
+        <span class="card-title">Win Rate</span>
+        <span class="p-2 rounded-lg bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400">🎯</span>
+      </div>
+      <div id="winRate" class="card-value">0%</div>
+      <div class="text-xs text-gray-400 mt-1">Winning trades ratio</div>
+    </div>
+
+  </div>
+
+  <!-- Secondary Metrics Grid -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    
+    <div class="card">
+      <span class="text-xs font-semibold text-gray-400 uppercase">Top Stock</span>
+      <div id="bestStock" class="text-lg font-bold mt-1 text-gray-900 dark:text-white">-</div>
+    </div>
+
+    <div class="card">
+      <span class="text-xs font-semibold text-gray-400 uppercase">Best Strategy</span>
+      <div id="bestStrategy" class="text-lg font-bold mt-1 text-gray-900 dark:text-white">-</div>
+    </div>
+
+    <div class="card">
+      <span class="text-xs font-semibold text-gray-400 uppercase">Biggest Win</span>
+      <div id="bigProfit" class="text-lg font-bold mt-1 text-profit">₹0.00</div>
+    </div>
+
+    <div class="card">
+      <span class="text-xs font-semibold text-gray-400 uppercase">Biggest Loss</span>
+      <div id="bigLoss" class="text-lg font-bold mt-1 text-loss">₹0.00</div>
+    </div>
+
+  </div>
+
+  <!-- Charts & Recent Trades Section -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    
+    <!-- Weekly Chart (Spans 2 columns on desktop) -->
+    <div class="lg:col-span-2 card">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="font-bold text-lg text-gray-900 dark:text-white flex items-center gap-2">
+          <span>📈</span> Weekly Performance Breakdown
+        </h3>
+      </div>
+      <div class="h-64 sm:h-72 w-full">
+        <canvas id="weeklyChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Random Trading Tip Card -->
+    <div class="card flex flex-col justify-between bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-800/80 dark:to-slate-900/90 border-blue-200 dark:border-gray-700">
+      <div>
+        <div class="flex items-center gap-2 text-blue-600 dark:text-blue-400 font-bold mb-3">
+          <span>🧠</span> Mindset & Rules
+        </div>
+        <p id="tradingTip" class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed italic">
+          💡 Loading trading rule...
+        </p>
+      </div>
+
+      <div class="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700/60 flex items-center justify-between">
+        <a href="{{ url_for('add_trade') }}" class="btn btn-primary w-full text-center">
+          ➕ Log New Trade
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Recent Trades Table -->
+  <div class="card">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="font-bold text-lg text-gray-900 dark:text-white flex items-center gap-2">
+        <span>📜</span> Recent Trades
+      </h3>
+      <a href="{{ url_for('history') }}" class="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline">
+        View All →
+      </a>
+    </div>
+
+    <div class="table-container">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Stock</th>
+            <th>Type</th>
+            <th>PnL (₹)</th>
+            <th>Strategy</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody id="recentTradesTable">
+          <!-- JS populated -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

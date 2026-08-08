@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block title %}TradeTrack Pro | Advanced Performance Analytics{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+  
+  <div class="border-b border-gray-200 dark:border-gray-800 pb-4">
+    <h1 class="text-2xl sm:text-3xl font-bold">📈 Advanced Performance Analytics</h1>
+    <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1">Deep-dive into your trading statistics, edge, emotional habits, and AI recommendations.</p>
+  </div>
+
+  <!-- Primary Analytics Metrics -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    
+    <div class="card">
+      <span class="card-title">Total Trades Executed</span>
+      <div id="totalTrades" class="card-value mt-2">0</div>
+      <div class="flex items-center gap-4 mt-2 text-xs">
+        <span class="text-profit">Wins: <strong id="winningTrades">0</strong></span>
+        <span class="text-loss">Losses: <strong id="losingTrades">0</strong></span>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="card-title">Overall Win Rate</span>
+      <div id="winRate" class="card-value text-blue-600 dark:text-blue-400 mt-2">0%</div>
+      <div class="text-xs text-gray-400 mt-2">Target win rate: >50%</div>
+    </div>
+
+    <div class="card">
+      <span class="card-title">Cumulative Net PnL</span>
+      <div id="netProfit" class="card-value mt-2">₹0.00</div>
+      <div class="text-xs text-gray-400 mt-2">Average PnL / trade: <span id="avgProfit">₹0.00</span></div>
+    </div>
+
+  </div>
+
+  <!-- Best, Worst, Streaks -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    
+    <div class="card">
+      <span class="text-xs font-semibold text-gray-400 uppercase">Top Stock</span>
+      <div id="bestStock" class="text-lg font-bold mt-1">-</div>
+      <span id="bestStockProfit" class="text-xs text-profit font-medium">₹0.00</span>
+    </div>
+
+    <div class="card">
+      <span class="text-xs font-semibold text-gray-400 uppercase">Worst Stock</span>
+      <div id="worstStock" class="text-lg font-bold mt-1">-</div>
+      <span id="worstStockLoss" class="text-xs text-loss font-medium">₹0.00</span>
+    </div>
+
+    <div class="card">
+      <span class="text-xs font-semibold text-gray-400 uppercase">Most Traded Symbol</span>
+      <div id="mostTraded" class="text-lg font-bold mt-1">-</div>
+      <span id="tradeCount" class="text-xs text-gray-400">0 Trades</span>
+    </div>
+
+    <div class="card">
+      <span class="text-xs font-semibold text-gray-400 uppercase">Longest Streaks</span>
+      <div class="flex items-center gap-3 mt-1 text-sm font-bold">
+        <span class="text-profit">Win: <span id="winStreak">0</span></span>
+        <span class="text-loss">Loss: <span id="lossStreak">0</span></span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Visual Charts Section -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    
+    <!-- Weekly Profit Chart -->
+    <div class="card lg:col-span-2">
+      <h3 class="font-bold text-base mb-4 flex items-center gap-2">
+        <span>📊</span> Weekly Profit Distribution
+      </h3>
+      <div class="h-64 w-full">
+        <canvas id="weeklyChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Win vs Loss Pie Chart -->
+    <div class="card">
+      <h3 class="font-bold text-base mb-4 flex items-center gap-2">
+        <span>🍩</span> Win vs Loss Ratio
+      </h3>
+      <div class="h-64 w-full flex items-center justify-center">
+        <canvas id="pieChart"></canvas>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Monthly Growth Chart -->
+  <div class="card">
+    <h3 class="font-bold text-base mb-4 flex items-center gap-2">
+      <span>📈</span> Monthly Profit Growth Curve
+    </h3>
+    <div class="h-72 w-full">
+      <canvas id="monthlyChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Tables & AI Insights Grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    
+    <!-- Strategy Performance Table -->
+    <div class="card">
+      <h3 class="font-bold text-base mb-4">🎯 Strategy Edge Table</h3>
+      <div class="table-container border-0">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Strategy</th>
+              <th>Total PnL (₹)</th>
+            </tr>
+          </thead>
+          <tbody id="strategyTableBody">
+            <!-- JS populated -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Emotion Breakdown Table -->
+    <div class="card">
+      <h3 class="font-bold text-base mb-4">🧠 Psychology & Emotions</h3>
+      <div class="table-container border-0">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Emotion</th>
+              <th>Frequency</th>
+            </tr>
+          </thead>
+          <tbody id="emotionTableBody">
+            <!-- JS populated -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Smart AI Insights -->
+    <div class="card bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-900 dark:to-gray-800 border-blue-200 dark:border-gray-700">
+      <h3 class="font-bold text-base mb-4 text-blue-600 dark:text-blue-400 flex items-center gap-2">
+        <span>🤖</span> Smart AI Insights
+      </h3>
+      <ul id="insightList" class="space-y-3 text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+        <!-- JS populated -->
+      </ul>
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/analytics.js') }}"></script>
+{% endblock %}

@@ -34,6 +34,8 @@ const pnl = document.getElementById("pnl");
 
 date.value = new Date().toISOString().split("T")[0];
 
+const currencySymbol = localStorage.getItem("currency") || "₹";
+
 // ---------- Live Profit / Loss ----------
 
 function calculatePnL() {
@@ -44,7 +46,7 @@ function calculatePnL() {
 
     if (!entryPrice || !exitPrice || !qty) {
 
-        pnl.innerHTML = "₹0";
+        pnl.innerHTML = currencySymbol + "0";
         pnl.style.color = "#2563eb";
         return;
 
@@ -62,7 +64,7 @@ function calculatePnL() {
 
     }
 
-    pnl.innerHTML = "₹" + result.toFixed(2);
+    pnl.innerHTML = currencySymbol + result.toFixed(2);
 
     if (result >= 0) {
 
@@ -83,7 +85,38 @@ exit.addEventListener("input", calculatePnL);
 quantity.addEventListener("input", calculatePnL);
 type.addEventListener("change", calculatePnL);
 
+// ---------- Edit Mode Check & Load ----------
+let editIndex = localStorage.getItem("editTradeIndex");
+let isEditMode = editIndex !== null && editIndex !== undefined && editIndex !== "";
 
+if (isEditMode) {
+    try {
+        const editData = JSON.parse(localStorage.getItem("editTradeData"));
+        if (editData) {
+            stock.value = editData.stock || "";
+            type.value = editData.type || "BUY";
+            entry.value = editData.entry || "";
+            exit.value = editData.exit || "";
+            quantity.value = editData.quantity || "";
+            strategy.value = editData.strategy || "";
+            emotion.value = editData.emotion || "";
+            date.value = editData.date || new Date().toISOString().split("T")[0];
+            notes.value = editData.notes || "";
+            
+            // Recalculate P&L
+            calculatePnL();
+            
+            // Update Title & Button Text
+            const pageTitle = document.querySelector(".page-title h1");
+            if (pageTitle) pageTitle.textContent = "Edit Trade";
+            
+            const submitBtn = document.querySelector(".save-btn");
+            if (submitBtn) submitBtn.textContent = "Update Trade";
+        }
+    } catch (err) {
+        console.error("Error loading edit trade data", err);
+    }
+}
 
 // ---------- Save Trade ----------
 
@@ -99,7 +132,7 @@ tradeForm.addEventListener("submit", function (e) {
     // Trade Object
     const trade = {
 
-        id: Date.now(),
+        id: isEditMode ? JSON.parse(localStorage.getItem("editTradeData")).id : Date.now(),
 
         username: currentUser.username || "Guest",
 
@@ -121,7 +154,7 @@ tradeForm.addEventListener("submit", function (e) {
 
         notes: notes.value.trim(),
 
-        pnl: Number(pnl.innerHTML.replace("₹", ""))
+        pnl: Number(pnl.innerHTML.replace(currencySymbol, ""))
 
     };
 
@@ -140,21 +173,22 @@ tradeForm.addEventListener("submit", function (e) {
 
     }
 
-    // Save
-    trades.push(trade);
-
-    localStorage.setItem("trades", JSON.stringify(trades));
-
-    console.log("Saved Trades:", trades);
-
-    alert("✅ Trade Saved Successfully!");
-
-    tradeForm.reset();
-
-    pnl.innerHTML = "₹0";
-
-    pnl.style.color = "#2563eb";
-
-    date.value = new Date().toISOString().split("T")[0];
+    if (isEditMode) {
+        trades[Number(editIndex)] = trade;
+        localStorage.removeItem("editTradeIndex");
+        localStorage.removeItem("editTradeData");
+        localStorage.setItem("trades", JSON.stringify(trades));
+        alert("✅ Trade Updated Successfully!");
+        window.location.href = "history.html";
+    } else {
+        trades.push(trade);
+        localStorage.setItem("trades", JSON.stringify(trades));
+        console.log("Saved Trades:", trades);
+        alert("✅ Trade Saved Successfully!");
+        tradeForm.reset();
+        pnl.innerHTML = currencySymbol + "0";
+        pnl.style.color = "#2563eb";
+        date.value = new Date().toISOString().split("T")[0];
+    }
 
 });
